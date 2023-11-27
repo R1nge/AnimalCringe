@@ -7,10 +7,8 @@ namespace _Assets.Scripts.Services
     {
         [SerializeField] private NetworkObject player;
 
-        public override void OnNetworkSpawn() => SpawnPlayerServerRpc();
-
         [ServerRpc(RequireOwnership = false)]
-        private void SpawnPlayerServerRpc(ServerRpcParams rpcParams = default)
+        public void SpawnPlayerServerRpc(ServerRpcParams rpcParams = default)
         {
             NetworkObject playerInstance = Instantiate(player);
             playerInstance.SpawnWithOwnership(rpcParams.Receive.SenderClientId);
