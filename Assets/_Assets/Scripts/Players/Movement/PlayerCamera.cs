@@ -1,13 +1,20 @@
-﻿using UnityEngine;
+﻿using Unity.Netcode;
+using UnityEngine;
 
 namespace _Assets.Scripts.Players.Movement
 {
-    public class PlayerCamera : MonoBehaviour
+    public class PlayerCamera : NetworkBehaviour
     {
         [SerializeField] private Camera playerCamera;
         [SerializeField] private float lookSpeed = 2f;
         [SerializeField] private float lookXLimit = 90f;
         private float _rotationX;
+
+        private void Start()
+        {
+            playerCamera.enabled = IsOwner;
+            playerCamera.GetComponent<AudioListener>().enabled = IsOwner;
+        }
 
         private void Update() => Rotate();
 
