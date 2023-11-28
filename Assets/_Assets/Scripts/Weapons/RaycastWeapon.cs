@@ -7,6 +7,9 @@ namespace _Assets.Scripts.Weapons
     {
         protected override void OnTick()
         {
+            if (!IsServer) return;
+            if (!IsSpawned) return;
+
             if (TimeBeforeNextShot <= 0)
             {
                 CanShoot.Value = true;
@@ -23,7 +26,7 @@ namespace _Assets.Scripts.Weapons
         {
             if (CanShoot.Value)
             {
-                Debug.Log("Shot");
+                Debug.LogError("Shot");
                 if (Physics.Raycast(shootPoint.position, shootPoint.forward, out RaycastHit hit))
                 {
                     if (hit.transform.TryGetComponent(out IDamageable damageable))
