@@ -183,6 +183,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dc8f7f95d9242eb93f0d7cddfc9d15f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerCamera: {fileID: 1346508971880997944}
   weaponParentPrefab: {fileID: 548039296574869318, guid: 6501dda8898e74a489dfc4c1bc9ce3cc, type: 3}
   weaponPrefabs:
   - {fileID: 5581557473600001488, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}

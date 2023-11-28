@@ -22,12 +22,12 @@ namespace _Assets.Scripts.Weapons
             }
         }
 
-        public override void Shoot()
+        public override void Shoot(Vector3 origin, Vector3 direction)
         {
             if (CanShoot.Value)
             {
                 Debug.LogError("Shot");
-                if (Physics.Raycast(shootPoint.position, shootPoint.forward, out RaycastHit hit))
+                if (Physics.Raycast(origin, direction, out RaycastHit hit))
                 {
                     if (hit.transform.TryGetComponent(out IDamageable damageable))
                     {

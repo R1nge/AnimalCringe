@@ -6,7 +6,7 @@ namespace _Assets.Scripts.Weapons
 {
     public class WeaponController : NetworkBehaviour
     {
-        //TODO: spawn full hierarchy
+        [SerializeField] private Camera playerCamera;
         [SerializeField] private NetworkObject weaponParentPrefab;
         [SerializeField] private List<Weapon> weaponPrefabs;
         private Weapon _weapon;
@@ -55,7 +55,7 @@ namespace _Assets.Scripts.Weapons
         [ServerRpc]
         private void ShootServerRpc()
         {
-            _weapon.Shoot();
+            _weapon.Shoot(playerCamera.transform.position, playerCamera.transform.forward);
         }
     }
 }

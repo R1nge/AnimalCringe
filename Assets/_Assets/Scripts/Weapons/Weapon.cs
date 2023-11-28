@@ -5,7 +5,6 @@ namespace _Assets.Scripts.Weapons
 {
     public abstract class Weapon : NetworkBehaviour
     {
-        [SerializeField] protected Transform shootPoint;
         [SerializeField] protected WeaponConfig weaponConfig;
         [SerializeField] protected Animator animator;
         protected NetworkVariable<bool> CanShoot;
@@ -21,7 +20,7 @@ namespace _Assets.Scripts.Weapons
 
         protected abstract void OnTick();
 
-        public abstract void Shoot();
+        public abstract void Shoot(Vector3 origin, Vector3 direction);
 
         public virtual void Show() => gameObject.SetActive(false);
 
