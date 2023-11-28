@@ -20,7 +20,7 @@ namespace _Assets.Scripts.Weapons
 
         protected abstract void OnTick();
 
-        public abstract void Shoot(Vector3 origin, Vector3 direction);
+        public abstract void Shoot(ulong owner, Vector3 origin, Vector3 direction);
 
         public virtual void Show() => gameObject.SetActive(false);
 

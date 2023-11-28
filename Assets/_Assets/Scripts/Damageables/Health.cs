@@ -25,7 +25,7 @@ namespace _Assets.Scripts.Damageables
             HealthChanged(0, health.Value);
         }
 
-        public void TakeDamage(int damage)
+        public void TakeDamage(ulong owner, int damage)
         {
             if (damage <= 0)
             {
@@ -33,11 +33,11 @@ namespace _Assets.Scripts.Damageables
                 return;
             }       
             
-            TakeDamageServerRpc(damage);
+            TakeDamageServerRpc(owner, damage);
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void TakeDamageServerRpc(int damage, ServerRpcParams rpcParams = default)
+        private void TakeDamageServerRpc(ulong owner, int damage)
         {
             health.Value -= damage;
 
@@ -47,7 +47,7 @@ namespace _Assets.Scripts.Damageables
                 {
                     TargetClientIds = new []
                     {
-                        rpcParams.Receive.SenderClientId
+                        owner
                     }
                 }
             };

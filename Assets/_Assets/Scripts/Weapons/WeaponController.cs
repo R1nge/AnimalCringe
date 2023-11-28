@@ -53,9 +53,9 @@ namespace _Assets.Scripts.Weapons
         }
 
         [ServerRpc]
-        private void ShootServerRpc()
+        private void ShootServerRpc(ServerRpcParams rpcParams = default)
         {
-            _weapon.Shoot(playerCamera.transform.position, playerCamera.transform.forward);
+            _weapon.Shoot(rpcParams.Receive.SenderClientId,playerCamera.transform.position, playerCamera.transform.forward);
         }
     }
 }
