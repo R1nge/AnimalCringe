@@ -79,7 +79,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2498284146
+  GlobalObjectIdHash: 2452512030
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -129,7 +129,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7e168a0d1974bbc8ad0fcf10a8d9bc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootPoint: {fileID: 6721049623836615810}
   weaponConfig: {fileID: 11400000, guid: 170974582b94b9c4e9e5e817b3ca07c8, type: 2}
   animator: {fileID: 0}
 --- !u!1 &7552577764696783936
