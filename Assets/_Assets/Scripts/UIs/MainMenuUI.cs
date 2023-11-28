@@ -18,7 +18,7 @@ namespace _Assets.Scripts.UIs
         private void Host()
         {
             NetworkManager.Singleton.StartHost();
-            NetworkManager.Singleton.SceneManager.LoadScene("Test", LoadSceneMode.Single);
+            NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
         }
 
         private void Join() => NetworkManager.Singleton.StartClient();

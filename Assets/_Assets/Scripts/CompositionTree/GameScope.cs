@@ -8,7 +8,6 @@ namespace _Assets.Scripts.CompositionTree
 {
     public class GameScope : LifetimeScope
     {
-
         [SerializeField] private PlayerSpawner playerSpawner;
         
         protected override void Configure(IContainerBuilder builder)

@@ -168,10 +168,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: 
+    TypeName: _Assets.Scripts.CompositionTree.LobbyScope
   autoRun: 1
   autoInjectGameObjects:
   - {fileID: 1477693683}
+  - {fileID: 565642765}
   playerSpawner: {fileID: 1492776392}
 --- !u!1 &464633625
 GameObject:
@@ -196,6 +197,50 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 464633625}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &565642765
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 565642767}
+  - component: {fileID: 565642766}
+  m_Layer: 0
+  m_Name: LobbyTests
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &565642766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 565642765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b85fdc48b6794521821ea8e436080abf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &565642767
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 565642765}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -577,3 +622,4 @@ SceneRoots:
   - {fileID: 464633626}
   - {fileID: 1645618229}
   - {fileID: 1588745313}
+  - {fileID: 565642767}
