@@ -16,7 +16,11 @@ namespace _Assets.Scripts.Players.Movement
             playerCamera.GetComponent<AudioListener>().enabled = IsOwner;
         }
 
-        private void Update() => Rotate();
+        private void Update()
+        {
+            if (!IsOwner) return;
+            Rotate();
+        }
 
         private void Rotate()
         {

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using _Assets.Scripts.Services;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,37 +11,38 @@ namespace _Assets.Scripts
 {
     public class LoadTest : MonoBehaviour
     {
-        //TODO: pre load previous scope
-
         private LifetimeScope _parent;
+        private SceneLoader _sceneLoader;
         
         [Inject]
-        private void Inject(LifetimeScope parent) => _parent = parent;
+        private void Inject(LifetimeScope parent, SceneLoader sceneLoader)
+        {
+            _parent = parent;
+            _sceneLoader = sceneLoader;
+        }
 
-        private void Start()
+        private IEnumerator Start()
         {
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
+
+            yield return new WaitForSeconds(10f);
             
-            //Lobby
-            print(_parent.name);
-            LoadSceneAsync();
+            LoadScene();
         }
 
-        private void SceneManagerOnOnLoadEventCompleted(string scenename, LoadSceneMode loadscenemode, List<ulong> clientscompleted, List<ulong> clientstimedout)
-        {
-            if (scenename == "Test")
-            {
-                SceneManager.UnloadSceneAsync("Lobby");
-            }
-        }
-
-        private void LoadSceneAsync()
+        private void LoadScene()
         {
             using (LifetimeScope.EnqueueParent(_parent))
             {
-                NetworkManager.Singleton.SceneManager.LoadScene("Test", LoadSceneMode.Additive);
-                
-                //await SceneManager.LoadSceneAsync("Test", LoadSceneMode.Additive);
+                _sceneLoader.LoadSceneNetwork("Test", LoadSceneMode.Additive);
+            }
+        }
+
+        private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode mode, List<ulong> completed, List<ulong> timedout)
+        {
+            if (sceneName == "Test")
+            {
+               _sceneLoader.UnloadScene("Lobby");
             }
         }
     }

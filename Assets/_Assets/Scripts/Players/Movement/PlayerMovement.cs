@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace _Assets.Scripts.Players.Movement
 {
-    public class PlayerMovement : MonoBehaviour
+    public class PlayerMovement : NetworkBehaviour
     {
         private readonly Queue<PlayerMovementInput> _movementInputQueue = new();
         private PlayerMovementInput _playerMovementInput;
@@ -13,13 +14,23 @@ namespace _Assets.Scripts.Players.Movement
         private void Awake()
         {
             _characterController = GetComponent<CharacterController>();
+            
+        }
+
+        private void Start()
+        {
             NetworkManager.Singleton.NetworkTickSystem.Tick += Tick;
         }
 
-        private void Update() => Move();
+        private void Update()
+        {
+            if (!IsOwner) return;
+            Move();
+        }
 
         private void Tick()
         {
+            if (!IsOwner) return;
             SendInputServerRpc(_playerMovementInput);
             MoveServerRpc();
         }

@@ -1,13 +1,22 @@
-﻿using Unity.Netcode;
+﻿using _Assets.Scripts.Services;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using VContainer;
 
 namespace _Assets.Scripts.UIs
 {
     public class MainMenuUI : MonoBehaviour
     {
         [SerializeField] private Button host, join;
+        private SceneLoader _sceneLoader;
+
+        [Inject]
+        private void Inject(SceneLoader sceneLoader)
+        {
+            _sceneLoader = sceneLoader;
+        }
 
         private void Awake()
         {
@@ -18,7 +27,7 @@ namespace _Assets.Scripts.UIs
         private void Host()
         {
             NetworkManager.Singleton.StartHost();
-            NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
+            _sceneLoader.LoadSceneNetwork("Lobby", LoadSceneMode.Single);
         }
 
         private void Join() => NetworkManager.Singleton.StartClient();

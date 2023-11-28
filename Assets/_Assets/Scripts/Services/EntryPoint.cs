@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using _Assets.Scripts.Services.StateMachine;
 using Unity.Netcode;
 using VContainer;
@@ -15,8 +15,9 @@ namespace _Assets.Scripts.Services
             _gameStateMachine = gameStateMachine;
         }
 
-        private void Start()
+        private IEnumerator Start()
         {
+            yield return null;
             _gameStateMachine.SwitchState(GameStateType.Game);
         }
     }
