@@ -30,7 +30,17 @@ namespace _Assets.Scripts.Services.Lobbies
             }
         }
 
-        private void ClientConnected(ulong clientId) => _lobby.AddPlayer(clientId, _skinService.SelectedSkinIndex);
+        private void ClientConnected(ulong clientId)
+        {
+            if (!IsServer)
+            {
+                int index = _skinService.SelectedSkinIndex;
+                ClientConnectedServerRpc(clientId, index);
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void ClientConnectedServerRpc(ulong clientId, int skinIndex) => _lobby.AddPlayer(clientId, skinIndex);
 
         private void ClientDisconnected(ulong clientId) => _lobby.RemovePlayer(clientId);
     }

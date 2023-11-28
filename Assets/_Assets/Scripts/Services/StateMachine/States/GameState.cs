@@ -13,7 +13,7 @@
 
         public void Enter()
         {
-            _playerSpawner.SpawnPlayerServerRpc();
+            _playerSpawner.SpawnPlayersServerRpc();
         }
 
         public void Exit() { }
