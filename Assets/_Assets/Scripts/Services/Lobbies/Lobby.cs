@@ -6,12 +6,11 @@ namespace _Assets.Scripts.Services.Lobbies
     {
         private readonly ILogger _logger;
         private readonly Dictionary<ulong, LobbyData> _lobbyData = new();
-
-        private Lobby(ILogger logger)
-        {
-            _logger = logger;
-        }
         
+        public Dictionary<ulong, LobbyData> LobbyData => _lobbyData;
+
+        private Lobby(ILogger logger) => _logger = logger;
+
         public void AddPlayer(ulong clientId)
         {
             if (_lobbyData.TryAdd(clientId, new LobbyData(clientId)))
