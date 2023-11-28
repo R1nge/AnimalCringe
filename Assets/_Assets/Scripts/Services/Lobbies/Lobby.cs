@@ -11,9 +11,9 @@ namespace _Assets.Scripts.Services.Lobbies
 
         private Lobby(ILogger logger) => _logger = logger;
 
-        public void AddPlayer(ulong clientId)
+        public void AddPlayer(ulong clientId, int skinIndex)
         {
-            if (_lobbyData.TryAdd(clientId, new LobbyData(clientId)))
+            if (_lobbyData.TryAdd(clientId, new LobbyData(clientId, skinIndex)))
             {
                 _logger.Log("Successfully added player");
             }

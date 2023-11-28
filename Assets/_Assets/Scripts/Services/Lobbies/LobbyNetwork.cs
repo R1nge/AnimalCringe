@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using _Assets.Scripts.Services.Skins;
+using Unity.Netcode;
 using VContainer;
 
 namespace _Assets.Scripts.Services.Lobbies
@@ -6,9 +7,14 @@ namespace _Assets.Scripts.Services.Lobbies
     public class LobbyNetwork : NetworkBehaviour
     {
         private Lobby _lobby;
+        private SkinService _skinService;
 
         [Inject]
-        private void Inject(Lobby lobby) => _lobby = lobby;
+        private void Inject(Lobby lobby, SkinService skinService)
+        {
+            _lobby = lobby;
+            _skinService = skinService;
+        }
 
         private void Awake()
         {
@@ -20,11 +26,11 @@ namespace _Assets.Scripts.Services.Lobbies
         {
             if (IsServer)
             {
-                _lobby.AddPlayer(NetworkManager.Singleton.LocalClientId);
+                _lobby.AddPlayer(NetworkManager.Singleton.LocalClientId, _skinService.SelectedSkinIndex);
             }
         }
 
-        private void ClientConnected(ulong clientId) => _lobby.AddPlayer(clientId);
+        private void ClientConnected(ulong clientId) => _lobby.AddPlayer(clientId, _skinService.SelectedSkinIndex);
 
         private void ClientDisconnected(ulong clientId) => _lobby.RemovePlayer(clientId);
     }

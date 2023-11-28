@@ -2,11 +2,13 @@
 {
     public struct LobbyData
     {
-        public ulong ClientId;
+        public readonly ulong ClientId;
+        public readonly int SelectedSkin;
 
-        public LobbyData(ulong clientId)
+        public LobbyData(ulong clientId, int selectedSkin)
         {
             ClientId = clientId;
+            SelectedSkin = selectedSkin;
         }
     }
 }
