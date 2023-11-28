@@ -22,7 +22,7 @@ namespace _Assets.Scripts.Services
         {
             foreach (var pair in _lobby.LobbyData)
             {
-                NetworkObject playerInstance = Instantiate(_skinService.GetSkin(pair.Value.SelectedSkin));
+                NetworkObject playerInstance = Instantiate(_skinService.GetSkinSo(pair.Value.SelectedSkin).Skin);
                 playerInstance.SpawnWithOwnership(pair.Value.ClientId);
             }
         }

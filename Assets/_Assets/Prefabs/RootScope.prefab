@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skins:
-  - {fileID: 7052046826197849263, guid: 14f9f9cba04840a4cbcbe0f7c23997db, type: 3}
+  - {fileID: 11400000, guid: 0a7a619652fbb3145b65fa1ca88ae187, type: 2}
 --- !u!1 &7611932556432391577
 GameObject:
   m_ObjectHideFlags: 0

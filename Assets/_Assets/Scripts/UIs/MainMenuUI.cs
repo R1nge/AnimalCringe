@@ -9,7 +9,8 @@ namespace _Assets.Scripts.UIs
 {
     public class MainMenuUI : MonoBehaviour
     {
-        [SerializeField] private Button host, join;
+        [SerializeField] private Button host, join, skins;
+        [SerializeField] private GameObject skinsMenu;
         private SceneLoader _sceneLoader;
 
         [Inject]
@@ -22,7 +23,10 @@ namespace _Assets.Scripts.UIs
         {
             host.onClick.AddListener(Host);
             join.onClick.AddListener(Join);
+            skins.onClick.AddListener(ShowSkins);
         }
+
+        private void ShowSkins() => skinsMenu.SetActive(true);
 
         private void Host()
         {
