@@ -9,7 +9,11 @@ namespace _Assets.Scripts.Damageables
         public event Action<float> OnHealthChanged; 
         [SerializeField] private NetworkVariable<float> health;
 
-        public override void OnNetworkSpawn() => health.OnValueChanged += HealthChanged;
+        public override void OnNetworkSpawn()
+        {
+            health.OnValueChanged += HealthChanged;
+            HealthChanged(0, health.Value);
+        }
 
         public void TakeDamage(int damage)
         {

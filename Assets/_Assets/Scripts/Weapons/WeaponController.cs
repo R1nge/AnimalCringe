@@ -6,7 +6,8 @@ namespace _Assets.Scripts.Weapons
 {
     public class WeaponController : NetworkBehaviour
     {
-        [SerializeField] private Transform weaponParent;
+        //TODO: spawn full hierarchy
+        [SerializeField] private NetworkObject weaponParentPrefab;
         [SerializeField] private List<Weapon> weaponPrefabs;
         private Weapon _weapon;
         private int _currentWeaponIndex;
@@ -20,8 +21,12 @@ namespace _Assets.Scripts.Weapons
         [ServerRpc]
         private void SpawnWeaponServerRpc(int weaponIndex, ServerRpcParams serverRpcParams = default)
         {
-            _weapon = Instantiate(weaponPrefabs[weaponIndex], weaponParent);
+            NetworkObject weaponParent = Instantiate(weaponParentPrefab, transform);
+            weaponParent.SpawnWithOwnership(serverRpcParams.Receive.SenderClientId);
+            weaponParent.TrySetParent(transform);
+            _weapon = Instantiate(weaponPrefabs[weaponIndex], weaponParent.transform);
             _weapon.GetComponent<NetworkObject>().SpawnWithOwnership(serverRpcParams.Receive.SenderClientId);
+            _weapon.GetComponent<NetworkObject>().TrySetParent(weaponParent);
             AssignWeaponClientRpc(_weapon.GetComponent<NetworkObject>());
         }
 
@@ -45,8 +50,6 @@ namespace _Assets.Scripts.Weapons
             {
                 ShootServerRpc();
             }
-
-            _weapon.transform.position = weaponParent.position;
         }
 
         [ServerRpc]
