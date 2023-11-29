@@ -1,8 +1,6 @@
 ﻿using System;
-using _Assets.Scripts.Services;
 using Unity.Netcode;
 using UnityEngine;
-using VContainer;
 
 namespace _Assets.Scripts.Damageables
 {
@@ -10,14 +8,6 @@ namespace _Assets.Scripts.Damageables
     {
         public event Action<float> OnHealthChanged; 
         [SerializeField] private NetworkVariable<float> health;
-        private DamagePopupService _damagePopupService;
-        
-        
-        [Inject]
-        private void Inject(DamagePopupService damagePopupService)
-        {
-            _damagePopupService = damagePopupService;
-        }
 
         public override void OnNetworkSpawn()
         {
@@ -25,7 +15,7 @@ namespace _Assets.Scripts.Damageables
             HealthChanged(0, health.Value);
         }
 
-        public void TakeDamage(ulong owner, int damage, Vector3 hitPosition, Vector3 hitDirection)
+        public void TakeDamage(ulong owner, int damage)
         {
             if (damage <= 0)
             {
@@ -33,26 +23,13 @@ namespace _Assets.Scripts.Damageables
                 return;
             }       
             
-            TakeDamageServerRpc(owner, damage, hitPosition, hitDirection);
+            TakeDamageServerRpc(owner, damage);
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void TakeDamageServerRpc(ulong owner, int damage, Vector3 hitPosition, Vector3 hitDirection)
+        private void TakeDamageServerRpc(ulong owner, int damage)
         {
             health.Value -= damage;
-
-            var clientRpc = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = new []
-                    {
-                        owner
-                    }
-                }
-            };
-            
-            _damagePopupService.ShowPopupClientRpc(hitPosition, hitDirection, 1f, damage, clientRpc);
             Debug.LogError($"Current health of {OwnerClientId} is {health.Value}");
         }
 

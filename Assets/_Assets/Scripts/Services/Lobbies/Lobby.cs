@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using _Assets.Scripts.Misc;
 
 namespace _Assets.Scripts.Services.Lobbies
 {
@@ -11,9 +12,9 @@ namespace _Assets.Scripts.Services.Lobbies
 
         private Lobby(ILogger logger) => _logger = logger;
 
-        public void AddPlayer(ulong clientId, int skinIndex)
+        public void AddPlayer(ulong clientId, int skinIndex, NetworkString nickname)
         {
-            if (_lobbyData.TryAdd(clientId, new LobbyData(clientId, skinIndex)))
+            if (_lobbyData.TryAdd(clientId, new LobbyData(clientId, skinIndex, nickname)))
             {
                 _logger.Log("Successfully added player");
             }

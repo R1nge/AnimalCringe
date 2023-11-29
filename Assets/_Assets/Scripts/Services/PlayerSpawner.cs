@@ -1,25 +1,20 @@
-﻿using _Assets.Scripts.Services.Lobbies;
-using _Assets.Scripts.Services.Skins;
+﻿using _Assets.Scripts.Services.Factories;
+using _Assets.Scripts.Services.Lobbies;
 using Unity.Netcode;
-using UnityEngine;
 using VContainer;
-using VContainer.Unity;
 
 namespace _Assets.Scripts.Services
 {
-    //TODO: create a factory
     public class PlayerSpawner : NetworkBehaviour
     {
-        private IObjectResolver _objectResolver;
         private Lobby _lobby;
-        private SkinService _skinService;
+        private PlayerFactory _playerFactory;
 
         [Inject]
-        private void Inject(IObjectResolver objectResolver, Lobby lobby, SkinService skinService)
+        private void Inject(Lobby lobby, PlayerFactory playerFactory)
         {
-            _objectResolver = objectResolver;
             _lobby = lobby;
-            _skinService = skinService;
+            _playerFactory = playerFactory;
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -27,9 +22,7 @@ namespace _Assets.Scripts.Services
         {
             foreach (var pair in _lobby.LobbyData)
             {
-                Debug.LogError($"Client id {pair.Value.ClientId} skin {_skinService.GetSkinSo(pair.Value.SelectedSkin).Skin.name}");
-                NetworkObject playerInstance = _objectResolver.Instantiate(_skinService.GetSkinSo(pair.Value.SelectedSkin).Skin);
-                playerInstance.SpawnWithOwnership(pair.Value.ClientId);
+                _playerFactory.CreatePlayer(pair.Key);
             }
         }
     }

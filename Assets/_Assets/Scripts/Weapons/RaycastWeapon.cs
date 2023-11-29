@@ -22,7 +22,7 @@ namespace _Assets.Scripts.Weapons
             }
         }
 
-        public override void Shoot(ulong owner,Vector3 origin, Vector3 direction)
+        public override void Shoot(ulong owner, Vector3 origin, Vector3 direction)
         {
             if (CanShoot.Value)
             {
@@ -31,7 +31,7 @@ namespace _Assets.Scripts.Weapons
                 {
                     if (hit.transform.TryGetComponent(out IDamageable damageable))
                     {
-                        damageable.TakeDamage(owner, weaponConfig.Damage, hit.point, direction);
+                        damageable.TakeDamage(owner, weaponConfig.Damage);
                     }
                 }
             }

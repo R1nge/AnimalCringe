@@ -14,7 +14,8 @@ namespace _Assets.Scripts.CompositionTree
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterComponent(skinService);
-            
+
+            builder.Register<NicknameService>(Lifetime.Singleton);
             builder.Register<ILogger, ConsoleLogger>(Lifetime.Singleton);
             builder.Register<SceneLoader>(Lifetime.Singleton);
         }

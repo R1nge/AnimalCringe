@@ -1,5 +1,7 @@
-﻿using _Assets.Scripts.Services.Skins;
+﻿using _Assets.Scripts.Misc;
+using _Assets.Scripts.Services.Skins;
 using Unity.Netcode;
+using UnityEngine;
 using VContainer;
 
 namespace _Assets.Scripts.Services.Lobbies
@@ -8,12 +10,14 @@ namespace _Assets.Scripts.Services.Lobbies
     {
         private Lobby _lobby;
         private SkinService _skinService;
+        private NicknameService _nicknameService;
 
         [Inject]
-        private void Inject(Lobby lobby, SkinService skinService)
+        private void Inject(Lobby lobby, SkinService skinService, NicknameService nicknameService)
         {
             _lobby = lobby;
             _skinService = skinService;
+            _nicknameService = nicknameService;
         }
 
         private void Awake()
@@ -26,7 +30,8 @@ namespace _Assets.Scripts.Services.Lobbies
         {
             if (IsServer)
             {
-                _lobby.AddPlayer(NetworkManager.Singleton.LocalClientId, _skinService.SelectedSkinIndex);
+                _lobby.AddPlayer(NetworkManager.Singleton.LocalClientId, _skinService.SelectedSkinIndex, _nicknameService.Nickname);
+                Debug.LogError($"{_nicknameService.Nickname}");
             }
         }
 
@@ -35,12 +40,17 @@ namespace _Assets.Scripts.Services.Lobbies
             if (!IsServer)
             {
                 int index = _skinService.SelectedSkinIndex;
-                ClientConnectedServerRpc(clientId, index);
+                string nickname = _nicknameService.Nickname;
+                ClientConnectedServerRpc(clientId, index, nickname);
+                Debug.LogError($"{_nicknameService.Nickname}");
             }
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void ClientConnectedServerRpc(ulong clientId, int skinIndex) => _lobby.AddPlayer(clientId, skinIndex);
+        private void ClientConnectedServerRpc(ulong clientId, int skinIndex, NetworkString nickname)
+        {
+            _lobby.AddPlayer(clientId, skinIndex, nickname);
+        }
 
         private void ClientDisconnected(ulong clientId) => _lobby.RemovePlayer(clientId);
     }
