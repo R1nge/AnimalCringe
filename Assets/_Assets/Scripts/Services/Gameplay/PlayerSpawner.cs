@@ -1,4 +1,5 @@
-﻿using _Assets.Scripts.Players;
+﻿using _Assets.Scripts.Damageables;
+using _Assets.Scripts.Players;
 using _Assets.Scripts.Services.Factories;
 using _Assets.Scripts.Services.Lobbies;
 using Unity.Netcode;
@@ -41,6 +42,7 @@ namespace _Assets.Scripts.Services.Gameplay
                 NetworkObject player = NetworkManager.SpawnManager.GetPlayerNetworkObject(clientId);
                 player.transform.position = spawnPositions[Random.Range(0, spawnPositions.Length)].position;
                 player.GetComponent<PlayerInput>().EnableServerRpc(true);
+                player.GetComponent<Health>().Respawn();
                 Debug.LogError("Spawned the player");
             }
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using _Assets.Scripts.Players;
 using Unity.Netcode;
@@ -20,6 +21,12 @@ namespace _Assets.Scripts.Weapons
         public override void OnNetworkSpawn()
         {
             if (!IsOwner) return;
+            StartCoroutine(SpawnWeapons_C());
+        }
+
+        private IEnumerator SpawnWeapons_C()
+        {
+            yield return null;
             SpawnWeaponServerRpc(_currentWeaponIndex);
         }
 
@@ -32,6 +39,7 @@ namespace _Assets.Scripts.Weapons
             _weapon = Instantiate(weaponPrefabs[weaponIndex], weaponParent.transform);
             _weapon.GetComponent<NetworkObject>().SpawnWithOwnership(serverRpcParams.Receive.SenderClientId);
             _weapon.GetComponent<NetworkObject>().TrySetParent(weaponParent);
+            _weapon.transform.localPosition = Vector3.zero;
             AssignWeaponClientRpc(_weapon.GetComponent<NetworkObject>());
         }
 

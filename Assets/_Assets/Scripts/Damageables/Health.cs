@@ -12,8 +12,9 @@ namespace _Assets.Scripts.Damageables
     public class Health : NetworkBehaviour, IDamageable
     {
         public event Action<float> OnHealthChanged;
-        [SerializeField] private NetworkVariable<float> health;
+        [SerializeField] private float maxHealth;
         [SerializeField] private float invincibilityTime;
+        private NetworkVariable<float> _health;
         private NetworkVariable<bool> _invincible;
         private KillService _killService;
         private PlayerDeathController _playerDeathController;
@@ -24,6 +25,7 @@ namespace _Assets.Scripts.Damageables
         private void Awake()
         {
             _playerDeathController = GetComponent<PlayerDeathController>();
+            _health = new NetworkVariable<float>(maxHealth);
             _invincible = new NetworkVariable<bool>(true);
         }
 
@@ -31,10 +33,16 @@ namespace _Assets.Scripts.Damageables
         {
             if (IsOwner)
             {
-                health.OnValueChanged += HealthChanged;
-                HealthChanged(0, health.Value);
+                _health.OnValueChanged += HealthChanged;
+                HealthChanged(0, _health.Value);
                 MakeInvincibleServerRpc();
             }
+        }
+
+        public void Respawn()
+        {
+            MakeInvincibleServerRpc();
+            _health.Value = maxHealth;
         }
 
         [ServerRpc]
@@ -61,7 +69,7 @@ namespace _Assets.Scripts.Damageables
                 return;
             }
 
-            if (health.Value - damage <= 0)
+            if (_health.Value - damage <= 0)
             {
                 DieServerRpc(killer);
             }
@@ -82,8 +90,8 @@ namespace _Assets.Scripts.Damageables
         [ServerRpc(RequireOwnership = false)]
         private void TakeDamageServerRpc(ulong killer, int damage)
         {
-            health.Value -= damage;
-            Debug.LogError($"Current health of {OwnerClientId} is {health.Value}");
+            _health.Value -= damage;
+            Debug.LogError($"Current health of {OwnerClientId} is {_health.Value}");
         }
 
         private void HealthChanged(float _, float value) => OnHealthChanged?.Invoke(value);
@@ -91,7 +99,7 @@ namespace _Assets.Scripts.Damageables
         public override void OnDestroy()
         {
             base.OnDestroy();
-            health.OnValueChanged -= HealthChanged;
+            _health.OnValueChanged -= HealthChanged;
         }
     }
 }
