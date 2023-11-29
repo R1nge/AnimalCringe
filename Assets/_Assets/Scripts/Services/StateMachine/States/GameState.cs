@@ -1,4 +1,6 @@
-﻿namespace _Assets.Scripts.Services.StateMachine.States
+﻿using _Assets.Scripts.Services.Gameplay;
+
+namespace _Assets.Scripts.Services.StateMachine.States
 {
     public class GameState : IGameState
     {

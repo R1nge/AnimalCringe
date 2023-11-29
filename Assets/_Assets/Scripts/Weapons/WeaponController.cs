@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using _Assets.Scripts.Players;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -11,6 +13,9 @@ namespace _Assets.Scripts.Weapons
         [SerializeField] private List<Weapon> weaponPrefabs;
         private Weapon _weapon;
         private int _currentWeaponIndex;
+        private PlayerInput _playerInput;
+
+        private void Awake() => _playerInput = GetComponent<PlayerInput>();
 
         public override void OnNetworkSpawn()
         {
@@ -45,6 +50,7 @@ namespace _Assets.Scripts.Weapons
         private void Update()
         {
             if (!IsOwner) return;
+            if (!_playerInput.Enabled) return;
 
             if (Input.GetMouseButton(0))
             {
@@ -55,7 +61,7 @@ namespace _Assets.Scripts.Weapons
         [ServerRpc]
         private void ShootServerRpc(ServerRpcParams rpcParams = default)
         {
-            _weapon.Shoot(rpcParams.Receive.SenderClientId,playerCamera.transform.position, playerCamera.transform.forward);
+            _weapon.Shoot(rpcParams.Receive.SenderClientId, playerCamera.transform.position, playerCamera.transform.forward);
         }
     }
 }

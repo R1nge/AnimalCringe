@@ -1,4 +1,4 @@
-﻿namespace _Assets.Scripts.Services
+﻿namespace _Assets.Scripts.Services.Gameplay
 {
     public class NicknameService
     {

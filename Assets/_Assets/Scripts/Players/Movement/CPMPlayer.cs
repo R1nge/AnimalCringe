@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using _Assets.Scripts.Players;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -31,6 +32,7 @@ public class CPMPlayer : NetworkBehaviour
     [SerializeField] private float jumpSpeed = 8.0f; // The speed at which the character's up axis gains when hitting jump
     [SerializeField] private bool holdJumpToBhop; // When enabled allows player to just hold jump button to keep on bhopping perfectly. Beware: smells like casual.
     private CharacterController _characterController;
+    private PlayerInput _playerInput;
 
     private Vector3 _playerVelocity = Vector3.zero;
 
@@ -41,6 +43,7 @@ public class CPMPlayer : NetworkBehaviour
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
+        _playerInput = GetComponent<PlayerInput>();
         NetworkManager.Singleton.NetworkTickSystem.Tick += OnTick;
     }
 
@@ -48,12 +51,14 @@ public class CPMPlayer : NetworkBehaviour
     {
         if (IsServer) return;
         if (!IsOwner) return;
+        if (!_playerInput.Enabled) return;
         MoveServerRpc();
     }
 
     private void Update()
     {
         if (!IsOwner) return;
+        if (!_playerInput.Enabled) return;
 
         GetInput();
         QueueJump();

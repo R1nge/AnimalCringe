@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using System;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace _Assets.Scripts.Players.Movement
@@ -9,6 +10,9 @@ namespace _Assets.Scripts.Players.Movement
         [SerializeField] private float lookSpeed = 2f;
         [SerializeField] private float lookXLimit = 90f;
         private float _rotationX;
+        private PlayerInput _playerInput;
+
+        private void Awake() => _playerInput = GetComponent<PlayerInput>();
 
         private void Start()
         {
@@ -19,6 +23,7 @@ namespace _Assets.Scripts.Players.Movement
         private void Update()
         {
             if (!IsOwner) return;
+            if (!_playerInput.Enabled) return;
             Rotate();
         }
 

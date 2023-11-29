@@ -1,10 +1,11 @@
-﻿using _Assets.Scripts.Services.Factories;
+﻿using _Assets.Scripts.Players;
+using _Assets.Scripts.Services.Factories;
 using _Assets.Scripts.Services.Lobbies;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
 
-namespace _Assets.Scripts.Services
+namespace _Assets.Scripts.Services.Gameplay
 {
     public class PlayerSpawner : NetworkBehaviour
     {
@@ -25,10 +26,22 @@ namespace _Assets.Scripts.Services
             var i = 0;
             foreach (var pair in _lobby.LobbyData)
             {
-                
                 NetworkObject player = _playerFactory.CreatePlayer(pair.Key);
                 player.transform.position = spawnPositions[i].position;
                 i++;
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void RespawnServerRpc(ulong clientId)
+        {
+            //TODO: don't destroy, but disable input and move to the spawn point instead
+            if (NetworkManager.SpawnManager.GetPlayerNetworkObject(clientId))
+            {
+                NetworkObject player = NetworkManager.SpawnManager.GetPlayerNetworkObject(clientId);
+                player.transform.position = spawnPositions[Random.Range(0, spawnPositions.Length)].position;
+                player.GetComponent<PlayerInput>().EnableServerRpc(true);
+                Debug.LogError("Spawned the player");
             }
         }
     }

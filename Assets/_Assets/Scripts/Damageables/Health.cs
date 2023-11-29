@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
+using _Assets.Scripts.Players;
 using _Assets.Scripts.Services;
+using _Assets.Scripts.Services.Gameplay;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
@@ -14,11 +16,16 @@ namespace _Assets.Scripts.Damageables
         [SerializeField] private float invincibilityTime;
         private NetworkVariable<bool> _invincible;
         private KillService _killService;
+        private PlayerDeathController _playerDeathController;
 
         [Inject]
         private void Inject(KillService killService) => _killService = killService;
 
-        private void Awake() => _invincible = new NetworkVariable<bool>(true);
+        private void Awake()
+        {
+            _playerDeathController = GetComponent<PlayerDeathController>();
+            _invincible = new NetworkVariable<bool>(true);
+        }
 
         public override void OnNetworkSpawn()
         {
@@ -69,6 +76,7 @@ namespace _Assets.Scripts.Damageables
         private void DieServerRpc(ulong killerId)
         {
             _killService.KillServerRpc(OwnerClientId, killerId);
+            _playerDeathController.Die();
         }
 
         [ServerRpc(RequireOwnership = false)]

@@ -1,5 +1,6 @@
 ﻿using _Assets.Scripts.Services;
 using _Assets.Scripts.Services.Factories;
+using _Assets.Scripts.Services.Gameplay;
 using _Assets.Scripts.Services.StateMachine;
 using UnityEngine;
 using VContainer;
@@ -14,9 +15,9 @@ namespace _Assets.Scripts.CompositionTree
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.RegisterComponent(killService);
             builder.Register<PlayerFactory>(Lifetime.Singleton);
             builder.RegisterComponent(playerSpawner);
+            builder.RegisterComponent(killService);
             builder.Register<GameStatesFactory>(Lifetime.Singleton);
             builder.Register<GameStateMachine>(Lifetime.Singleton);
         }
