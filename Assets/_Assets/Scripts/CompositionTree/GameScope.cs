@@ -10,9 +10,11 @@ namespace _Assets.Scripts.CompositionTree
     public class GameScope : LifetimeScope
     {
         [SerializeField] private PlayerSpawner playerSpawner;
+        [SerializeField] private KillService killService;
 
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.RegisterComponent(killService);
             builder.Register<PlayerFactory>(Lifetime.Singleton);
             builder.RegisterComponent(playerSpawner);
             builder.Register<GameStatesFactory>(Lifetime.Singleton);

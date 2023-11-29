@@ -4,6 +4,6 @@ namespace _Assets.Scripts.Damageables
 {
     public interface IDamageable
     {
-        void TakeDamage(ulong owner, int damage);
+        void TakeDamage(ulong killer, int damage);
     }
 }

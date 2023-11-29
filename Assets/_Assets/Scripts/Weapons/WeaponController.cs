@@ -21,7 +21,7 @@ namespace _Assets.Scripts.Weapons
         [ServerRpc]
         private void SpawnWeaponServerRpc(int weaponIndex, ServerRpcParams serverRpcParams = default)
         {
-            NetworkObject weaponParent = Instantiate(weaponParentPrefab, transform);
+            NetworkObject weaponParent = Instantiate(weaponParentPrefab, transform.position, Quaternion.identity);
             weaponParent.SpawnWithOwnership(serverRpcParams.Receive.SenderClientId);
             weaponParent.TrySetParent(transform);
             _weapon = Instantiate(weaponPrefabs[weaponIndex], weaponParent.transform);

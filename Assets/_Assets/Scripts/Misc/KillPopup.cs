@@ -8,18 +8,11 @@ namespace _Assets.Scripts.Misc
     public class KillPopup : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _text;
-        private Lobby _lobby;
-        
-        [Inject]
-        private void Inject(Lobby lobby)
+
+
+        public void Show(NetworkString text)
         {
-            _lobby = lobby;
-        }
-        
-        public void Show(ulong killedId)
-        {
-            NetworkString killedName = _lobby.LobbyData[killedId].Nickname;
-            _text.text = killedName;
+            _text.text = text;
         }
 
         public void Hide()

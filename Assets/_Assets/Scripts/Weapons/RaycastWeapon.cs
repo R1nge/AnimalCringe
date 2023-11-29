@@ -27,6 +27,7 @@ namespace _Assets.Scripts.Weapons
             if (CanShoot.Value)
             {
                 Debug.LogError("Shot");
+                animator.Animator.SetTrigger("Shooting");
                 if (Physics.Raycast(origin, direction, out RaycastHit hit))
                 {
                     if (hit.transform.TryGetComponent(out IDamageable damageable))

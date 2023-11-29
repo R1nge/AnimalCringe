@@ -1,4 +1,5 @@
 ﻿using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 
 namespace _Assets.Scripts.Weapons
@@ -6,7 +7,7 @@ namespace _Assets.Scripts.Weapons
     public abstract class Weapon : NetworkBehaviour
     {
         [SerializeField] protected WeaponConfig weaponConfig;
-        [SerializeField] protected Animator animator;
+        [SerializeField] protected NetworkAnimator animator;
         protected NetworkVariable<bool> CanShoot;
         protected float TimeBeforeNextShot;
 
