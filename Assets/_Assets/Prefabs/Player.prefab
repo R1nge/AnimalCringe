@@ -359,7 +359,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34f8b3ef85c14aa2aad8185addd599fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _text: {fileID: 4826725293989316323}
+  hideDelay: 1
+  popupText: {fileID: 4826725293989316323}
 --- !u!114 &3158640256116111053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -655,7 +656,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
