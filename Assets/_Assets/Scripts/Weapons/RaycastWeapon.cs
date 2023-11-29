@@ -31,7 +31,7 @@ namespace _Assets.Scripts.Weapons
                 {
                     if (hit.transform.TryGetComponent(out IDamageable damageable))
                     {
-                        damageable.TakeDamage(owner, weaponConfig.Damage);
+                        damageable.TakeDamage(owner, weaponConfig.Damage, hit.point, direction);
                     }
                 }
             }

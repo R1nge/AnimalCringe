@@ -25,7 +25,7 @@ namespace _Assets.Scripts.Damageables
             HealthChanged(0, health.Value);
         }
 
-        public void TakeDamage(ulong owner, int damage)
+        public void TakeDamage(ulong owner, int damage, Vector3 hitPosition, Vector3 hitDirection)
         {
             if (damage <= 0)
             {
@@ -33,11 +33,11 @@ namespace _Assets.Scripts.Damageables
                 return;
             }       
             
-            TakeDamageServerRpc(owner, damage);
+            TakeDamageServerRpc(owner, damage, hitPosition, hitDirection);
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void TakeDamageServerRpc(ulong owner, int damage)
+        private void TakeDamageServerRpc(ulong owner, int damage, Vector3 hitPosition, Vector3 hitDirection)
         {
             health.Value -= damage;
 
@@ -52,7 +52,7 @@ namespace _Assets.Scripts.Damageables
                 }
             };
             
-            _damagePopupService.ShowPopupClientRpc(transform.position, 1f, clientRpc);
+            _damagePopupService.ShowPopupClientRpc(hitPosition, hitDirection, 1f, damage, clientRpc);
             Debug.LogError($"Current health of {OwnerClientId} is {health.Value}");
         }
 
