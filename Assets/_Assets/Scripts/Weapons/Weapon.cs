@@ -1,6 +1,8 @@
-﻿using Unity.Netcode;
+﻿using _Assets.Scripts.Services.Gameplay;
+using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
+using VContainer;
 
 namespace _Assets.Scripts.Weapons
 {
@@ -10,6 +12,10 @@ namespace _Assets.Scripts.Weapons
         [SerializeField] protected NetworkAnimator animator;
         protected NetworkVariable<bool> CanShoot;
         protected float TimeBeforeNextShot;
+        protected RollbackService RollbackService;
+        
+        [Inject]
+        protected void Inject(RollbackService rollbackService) => RollbackService = rollbackService;
 
         private void Awake()
         {

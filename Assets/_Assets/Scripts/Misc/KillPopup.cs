@@ -29,6 +29,7 @@ namespace _Assets.Scripts.Misc
         {
             yield return _hide;
             Hide();
+            _hideCoroutine = null;
         }
 
         private void Hide() => popupText.text = string.Empty;

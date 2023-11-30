@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using _Assets.Scripts.Players;
-using _Assets.Scripts.Services;
 using _Assets.Scripts.Services.Gameplay;
 using Unity.Netcode;
 using UnityEngine;
@@ -79,7 +78,6 @@ namespace _Assets.Scripts.Damageables
             }
         }
 
-        //TODO: queue for a respawn
         [ServerRpc(RequireOwnership = false)]
         private void DieServerRpc(ulong killerId)
         {

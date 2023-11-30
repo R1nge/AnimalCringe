@@ -1,5 +1,4 @@
-﻿using _Assets.Scripts.Services;
-using _Assets.Scripts.Services.Factories;
+﻿using _Assets.Scripts.Services.Factories;
 using _Assets.Scripts.Services.Gameplay;
 using _Assets.Scripts.Services.StateMachine;
 using UnityEngine;
@@ -12,9 +11,11 @@ namespace _Assets.Scripts.CompositionTree
     {
         [SerializeField] private PlayerSpawner playerSpawner;
         [SerializeField] private KillService killService;
+        [SerializeField] private RollbackService rollbackService;
 
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.RegisterComponent(rollbackService);
             builder.Register<PlayerFactory>(Lifetime.Singleton);
             builder.RegisterComponent(playerSpawner);
             builder.RegisterComponent(killService);
