@@ -23,7 +23,7 @@ namespace _Assets.Scripts.Weapons
             }
         }
 
-        public override bool Shoot(ulong owner, Vector3 origin, Vector3 direction, int tick)
+        public override bool Shoot(ulong owner, Vector3 origin, Vector3 direction)
         {
             if (CanShoot.Value)
             {

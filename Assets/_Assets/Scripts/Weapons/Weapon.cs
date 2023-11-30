@@ -21,7 +21,7 @@ namespace _Assets.Scripts.Weapons
 
         protected abstract void OnTick();
 
-        public abstract bool Shoot(ulong owner, Vector3 origin, Vector3 direction, int tick);
+        public abstract bool Shoot(ulong owner, Vector3 origin, Vector3 direction);
 
         public virtual void Show() => gameObject.SetActive(false);
 

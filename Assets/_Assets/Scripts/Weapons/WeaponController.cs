@@ -68,9 +68,8 @@ namespace _Assets.Scripts.Weapons
 
             if (Input.GetMouseButton(0))
             {
-                if (_weapon.Shoot(OwnerClientId, playerCamera.transform.position, playerCamera.transform.forward, _rollbackService.CurrentTick))
+                if (_weapon.Shoot(OwnerClientId, playerCamera.transform.position, playerCamera.transform.forward))
                 {
-                    _rollbackService.Rollback(_rollbackService.CurrentTick);
                     ShootServerRpc();
                 }
             }
@@ -79,7 +78,8 @@ namespace _Assets.Scripts.Weapons
         [ServerRpc]
         private void ShootServerRpc(ServerRpcParams rpcParams = default)
         {
-            _weapon.Shoot(rpcParams.Receive.SenderClientId, playerCamera.transform.position, playerCamera.transform.forward, _rollbackService.CurrentTick);
+            _rollbackService.Rollback(_rollbackService.CurrentTick);
+            _weapon.Shoot(rpcParams.Receive.SenderClientId, playerCamera.transform.position, playerCamera.transform.forward);
             StartCoroutine(Return());
         }
 
