@@ -1,4 +1,5 @@
 ﻿using _Assets.Scripts.Damageables;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace _Assets.Scripts.Weapons
@@ -22,20 +23,35 @@ namespace _Assets.Scripts.Weapons
             }
         }
 
-        public override void Shoot(ulong owner, Vector3 origin, Vector3 direction)
+        public override bool Shoot(ulong owner, Vector3 origin, Vector3 direction, int tick)
         {
             if (CanShoot.Value)
             {
-                Debug.LogError("Shot");
                 animator.Animator.SetTrigger("Shooting");
                 if (Physics.Raycast(origin, direction, out RaycastHit hit))
                 {
-                    if (hit.transform.TryGetComponent(out IDamageable damageable))
+                    if (hit.transform.root.TryGetComponent(out NetworkObject networkObject))
                     {
-                        damageable.TakeDamage(owner, weaponConfig.Damage);
+                        if (networkObject.OwnerClientId == owner)
+                        {
+                            Debug.LogError("Hit himself");
+                            return false;
+                        }
+                    }
+
+                    if (hit.transform.root.TryGetComponent(out IDamageable damageable))
+                    {
+                        if (IsServer)
+                        {
+                            damageable.TakeDamage(owner, weaponConfig.Damage);
+                        }
+
+                        return true;
                     }
                 }
             }
+
+            return false;
         }
     }
 }

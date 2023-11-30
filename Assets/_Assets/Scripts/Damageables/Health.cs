@@ -15,6 +15,7 @@ namespace _Assets.Scripts.Damageables
         [SerializeField] private float invincibilityTime;
         private NetworkVariable<float> _health;
         private NetworkVariable<bool> _invincible;
+        private NetworkVariable<bool> _isDead;
         private KillService _killService;
         private PlayerDeathController _playerDeathController;
 
@@ -26,6 +27,7 @@ namespace _Assets.Scripts.Damageables
             _playerDeathController = GetComponent<PlayerDeathController>();
             _health = new NetworkVariable<float>(maxHealth);
             _invincible = new NetworkVariable<bool>(true);
+            _isDead = new NetworkVariable<bool>();
         }
 
         public override void OnNetworkSpawn()
@@ -44,11 +46,12 @@ namespace _Assets.Scripts.Damageables
             _health.Value = maxHealth;
         }
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         private void MakeInvincibleServerRpc() => StartCoroutine(MakeInvincble_C());
 
         private IEnumerator MakeInvincble_C()
         {
+            _isDead.Value = false;
             _invincible.Value = true;
             yield return new WaitForSeconds(invincibilityTime);
             _invincible.Value = false;
@@ -59,6 +62,12 @@ namespace _Assets.Scripts.Damageables
             if (_invincible.Value)
             {
                 Debug.LogError("Trying to take damage while invincible");
+                return;
+            }
+
+            if (_isDead.Value)
+            {
+                Debug.LogError("Trying to take damage while dead");
                 return;
             }
 
@@ -81,6 +90,7 @@ namespace _Assets.Scripts.Damageables
         [ServerRpc(RequireOwnership = false)]
         private void DieServerRpc(ulong killerId)
         {
+            _isDead.Value = true;
             _killService.KillServerRpc(OwnerClientId, killerId);
             _playerDeathController.Die();
         }

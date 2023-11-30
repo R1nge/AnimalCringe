@@ -34,6 +34,10 @@ namespace _Assets.Scripts.Players
 
         public override void OnNetworkSpawn()
         {
+            if (IsServer)
+            {
+                _rollbackService.AddPlayerRollbackServerRpc(this);
+            }
             if (!IsOwner) return;
             NetworkManager.NetworkTickSystem.Tick += OnTick;
         }
@@ -42,71 +46,49 @@ namespace _Assets.Scripts.Players
         {
             for (int i = 0; i < _colliderPositions.Length; i++)
             {
-                //TODO: collider local to world position
                 _colliderPositions[i] = colliders[i].transform.position;
             }
 
             AddPlayerRollbackDataServerRpc(_colliderPositions);
         }
 
-        private void Update()
+        [ServerRpc(RequireOwnership = false)]
+        public void RollbackServerRpc(int tick)
         {
-            if (!IsOwner) return;
-            if (Input.GetMouseButtonDown(1))
-            {
-                if (IsServer)
-                {
-                    for (int i = 0; i < _playerRollbackData.Count; i++)
-                    {
-                        if (_playerRollbackData[i].Tick == _rollbackService.CurrentTick - 128)
-                        {
-                            RollbackClientRpc(i);
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    RollbackServerRpc();
-                }
-            }
-        }
-
-        [ServerRpc]
-        private void RollbackServerRpc()
-        {
-            Debug.LogError($"Current tick: {_rollbackService.CurrentTick}, Data count: {_playerRollbackData.Count}, Last data tick: {_playerRollbackData[^1].Tick}");
+            Debug.Log($"Current tick: {_rollbackService.CurrentTick}, Data count: {_playerRollbackData.Count}, Last data tick: {_playerRollbackData[^1].Tick}");
             for (int i = 0; i < _playerRollbackData.Count; i++)
             {
-                if (_playerRollbackData[i].Tick == _rollbackService.CurrentTick - 128)
+                if (_playerRollbackData[i].Tick == tick)
                 {
-                    RollbackClientRpc(i);
+                    RollbackClientRpc(_playerRollbackData[i]);
                     break;
                 }
             }
         }
 
         [ClientRpc]
-        private void RollbackClientRpc(int index)
+        private void RollbackClientRpc(PlayerRollbackData playerRollbackData)
         {
             Debug.LogError("Rollback");
             for (int i = 0; i < colliders.Length; i++)
             {
-                Vector3 position = _playerRollbackData[index].Positions[i];
+                Vector3 position = playerRollbackData.Positions[i];
                 colliders[i].transform.parent = null;
                 colliders[i].transform.position = position;
-                StartCoroutine(Return());
             }
         }
 
-        private IEnumerator Return()
+        [ServerRpc(RequireOwnership = false)]
+        public void ReturnServerRpc() => ReturnClientRpc();
+
+        [ClientRpc]
+        private void ReturnClientRpc()
         {
-            yield return new WaitForSeconds(5f);
             colliders[0].transform.parent = transform;
             colliders[0].transform.localPosition = _colliderPositionsStart[0];
         }
 
-        [ServerRpc]
+        [ServerRpc(Delivery = RpcDelivery.Unreliable)]
         private void AddPlayerRollbackDataServerRpc(Vector3[] position, ServerRpcParams serverRpcParams = default)
         {
             if (_playerRollbackData.Count > NetworkManager.NetworkTickSystem.TickRate)
@@ -115,7 +97,7 @@ namespace _Assets.Scripts.Players
             }
 
             _playerRollbackData.Add(new PlayerRollbackData(position, _rollbackService.CurrentTick));
-            Debug.LogError($"Added Data {serverRpcParams.Receive.SenderClientId}, Tick: {_rollbackService.CurrentTick}");
+            Debug.Log($"Added Data {serverRpcParams.Receive.SenderClientId}, Tick: {_rollbackService.CurrentTick}");
         }
 
         public override void OnNetworkDespawn() => NetworkManager.NetworkTickSystem.Tick -= OnTick;

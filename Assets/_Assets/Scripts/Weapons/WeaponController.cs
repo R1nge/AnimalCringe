@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using _Assets.Scripts.Players;
+using _Assets.Scripts.Services.Gameplay;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 
 namespace _Assets.Scripts.Weapons
 {
@@ -15,6 +17,10 @@ namespace _Assets.Scripts.Weapons
         private Weapon _weapon;
         private int _currentWeaponIndex;
         private PlayerInput _playerInput;
+        private RollbackService _rollbackService;
+
+        [Inject]
+        private void Inject(RollbackService rollbackService) => _rollbackService = rollbackService;
 
         private void Awake() => _playerInput = GetComponent<PlayerInput>();
 
@@ -62,14 +68,25 @@ namespace _Assets.Scripts.Weapons
 
             if (Input.GetMouseButton(0))
             {
-                ShootServerRpc();
+                if (_weapon.Shoot(OwnerClientId, playerCamera.transform.position, playerCamera.transform.forward, _rollbackService.CurrentTick))
+                {
+                    _rollbackService.Rollback(_rollbackService.CurrentTick);
+                    ShootServerRpc();
+                }
             }
         }
 
         [ServerRpc]
         private void ShootServerRpc(ServerRpcParams rpcParams = default)
         {
-            _weapon.Shoot(rpcParams.Receive.SenderClientId, playerCamera.transform.position, playerCamera.transform.forward);
+            _weapon.Shoot(rpcParams.Receive.SenderClientId, playerCamera.transform.position, playerCamera.transform.forward, _rollbackService.CurrentTick);
+            StartCoroutine(Return());
+        }
+
+        private IEnumerator Return()
+        {
+            yield return null;
+            _rollbackService.Return();
         }
     }
 }
