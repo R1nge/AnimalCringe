@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using _Assets.Scripts;
 using _Assets.Scripts.Players;
 using Unity.Netcode;
 using UnityEngine;
@@ -33,6 +34,7 @@ public class CPMPlayer : NetworkBehaviour
     [SerializeField] private bool holdJumpToBhop; // When enabled allows player to just hold jump button to keep on bhopping perfectly. Beware: smells like casual.
     private CharacterController _characterController;
     private PlayerInput _playerInput;
+    private ClientNetworkTransform _clientNetworkTransform;
 
     private Vector3 _playerVelocity = Vector3.zero;
 
@@ -45,6 +47,7 @@ public class CPMPlayer : NetworkBehaviour
         _characterController = GetComponent<CharacterController>();
         _playerInput = GetComponent<PlayerInput>();
         NetworkManager.Singleton.NetworkTickSystem.Tick += OnTick;
+        _clientNetworkTransform = GetComponent<ClientNetworkTransform>();
     }
 
     private void OnTick()
@@ -141,6 +144,11 @@ public class CPMPlayer : NetworkBehaviour
         {
             _playerVelocity.y = jumpSpeed;
             _lastInput.WishJump = false;
+            _clientNetworkTransform.Interpolate = false;
+        }
+        else
+        {
+            _clientNetworkTransform.Interpolate = true;
         }
     }
 
