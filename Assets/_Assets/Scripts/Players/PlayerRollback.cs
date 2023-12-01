@@ -46,7 +46,6 @@ namespace _Assets.Scripts.Players
             for (int i = 0; i < _colliderPositions.Length; i++)
             {
                 _colliderPositions[i] = colliders[i].transform.position;
-                Debug.LogError($"POSITION: {colliders[i].transform.position}");
             }
 
             AddPlayerRollbackDataServerRpc(_colliderPositions);
@@ -55,12 +54,10 @@ namespace _Assets.Scripts.Players
         [ServerRpc(RequireOwnership = false)]
         public void RollbackServerRpc(int tick)
         {
-            Debug.Log($"Current tick: {_rollbackService.CurrentTick}, Data count: {_playerRollbackData.Length}, Last data tick: {_playerRollbackData[^1].Tick}");
             for (int data = 0; data < _playerRollbackData.Length; data++)
             {
                 for (int collider = 0; collider < colliders.Length; collider++)
                 {
-                    Debug.LogError("Rollback");
                     Vector3 position = _playerRollbackData[data].Positions[collider];
                     colliders[collider].transform.localPosition = transform.InverseTransformPoint(position);
                 }
@@ -78,7 +75,6 @@ namespace _Assets.Scripts.Players
         {
             for (int i = 0; i < colliders.Length; i++)
             {
-                Debug.LogError("Rollback");
                 Vector3 position = playerRollbackData.Positions[i];
                 colliders[i].transform.localPosition = transform.InverseTransformPoint(position);
             }
@@ -101,7 +97,6 @@ namespace _Assets.Scripts.Players
         {
             long tick = _rollbackService.CurrentTick % NetworkManager.NetworkTickSystem.TickRate;
             _playerRollbackData[tick] = new PlayerRollbackData(position, _rollbackService.CurrentTick);
-            //Debug.LogError($"Added Data {serverRpcParams.Receive.SenderClientId}, ServerTick: {_rollbackService.CurrentTick}, Tick: {tick}");
         }
 
         public override void OnNetworkDespawn() => NetworkManager.NetworkTickSystem.Tick -= OnTick;

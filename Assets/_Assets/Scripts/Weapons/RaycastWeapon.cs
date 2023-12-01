@@ -8,7 +8,6 @@ namespace _Assets.Scripts.Weapons
     {
         protected override void OnTick()
         {
-            Debug.LogError($"TICK. TimeBeforeNextShot: {TimeBeforeNextShot}");
             if (!CanShoot)
             {
                 if (TimeBeforeNextShot <= 0)
@@ -26,27 +25,22 @@ namespace _Assets.Scripts.Weapons
 
         public override bool Shoot(ulong owner, Vector3 origin, Vector3 direction, bool isServer)
         {
-            Debug.LogError($"Server?: {isServer}, Can shoot?: {CanShoot}");
             if (CanShoot)
             {
                 //animator.SetTrigger("Shooting");
                 if (Physics.Raycast(origin, direction, out RaycastHit hit))
                 {
-                    Debug.LogError($"RAYCAST IsServer {isServer}");
                     if (hit.transform.root.TryGetComponent(out NetworkObject networkObject))
                     {
                         if (networkObject.OwnerClientId == owner)
                         {
-                            Debug.LogError("Hit himself");
                             return false;
                         }
 
                         if (networkObject.TryGetComponent(out IDamageable damageable))
                         {
-                            Debug.LogError("HIT");
                             if (isServer)
                             {
-                                Debug.LogError("DAMAGE");
                                 damageable.TakeDamage(owner, weaponConfig.Damage);
                             }
 

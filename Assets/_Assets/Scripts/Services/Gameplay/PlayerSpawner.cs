@@ -56,7 +56,6 @@ namespace _Assets.Scripts.Services.Gameplay
                 RespawnClientRpc(player, positionIndex, clientRpc);
                 player.GetComponent<PlayerInput>().EnableServerRpc(true);
                 player.GetComponent<Health>().Respawn();
-                Debug.LogError("Spawned the player");
             }
         }
 
