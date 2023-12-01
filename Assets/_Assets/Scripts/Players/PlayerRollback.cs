@@ -56,11 +56,11 @@ namespace _Assets.Scripts.Players
         {
             for (int data = 0; data < _playerRollbackData.Length; data++)
             {
-                for (int collider = 0; collider < colliders.Length; collider++)
-                {
-                    Vector3 position = _playerRollbackData[data].Positions[collider];
-                    colliders[collider].transform.localPosition = transform.InverseTransformPoint(position);
-                }
+                // for (int collider = 0; collider < colliders.Length; collider++)
+                // {
+                //     Vector3 position = _playerRollbackData[data].Positions[collider];
+                //     colliders[collider].transform.localPosition = transform.InverseTransformPoint(position);
+                // }
 
                 if (_playerRollbackData[data].Tick == tick)
                 {
