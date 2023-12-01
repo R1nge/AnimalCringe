@@ -35,14 +35,8 @@ namespace _Assets.Scripts.Weapons
             {
                 Vector3 shootOrigin = playerCamera.transform.position;
                 Vector3 shootDirection = playerCamera.transform.forward;
-                
-                
-                
+
                 if (_weapon.Shoot(OwnerClientId, shootOrigin, shootDirection, false))
-                {
-                    ShootServerRpc(OwnerClientId, shootOrigin, shootDirection);
-                }
-                else
                 {
                     ShootServerRpc(OwnerClientId, shootOrigin, shootDirection);
                 }
