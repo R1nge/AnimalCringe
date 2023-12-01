@@ -78,7 +78,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponConfig: {fileID: 11400000, guid: 170974582b94b9c4e9e5e817b3ca07c8, type: 2}
-  animator: {fileID: 0}
+  animator: {fileID: 7790141744149197701}
 --- !u!1 &7552577764696783936
 GameObject:
   m_ObjectHideFlags: 0

@@ -88,7 +88,7 @@ namespace _Assets.Scripts.Players
         {
             for (int i = 0; i < colliders.Length; i++)
             {
-                colliders[i].transform.localPosition = _colliderPositionsStart[0];
+                colliders[i].transform.localPosition = _colliderPositionsStart[i];
             }
         }
 

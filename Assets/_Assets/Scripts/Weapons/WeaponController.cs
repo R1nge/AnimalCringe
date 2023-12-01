@@ -19,11 +19,9 @@ namespace _Assets.Scripts.Weapons
         [Inject]
         private void Inject(RollbackService rollbackService) => _rollbackService = rollbackService;
 
-        private void Awake()
-        {
-            _playerInput = GetComponent<PlayerInput>();
-            _weapon = weapons[_currentWeaponIndex];
-        }
+        private void Awake() => _playerInput = GetComponent<PlayerInput>();
+
+        public override void OnNetworkSpawn() => _weapon = weapons[_currentWeaponIndex];
 
         private void Update()
         {
@@ -35,6 +33,7 @@ namespace _Assets.Scripts.Weapons
                 Vector3 shootOrigin = playerCamera.transform.position;
                 Vector3 shootDirection = playerCamera.transform.forward;
 
+                PlayAnimationServerRpc();
                 if (_weapon.Shoot(OwnerClientId, shootOrigin, shootDirection, false))
                 {
                     ShootServerRpc(OwnerClientId, shootOrigin, shootDirection);
@@ -49,5 +48,15 @@ namespace _Assets.Scripts.Weapons
             _weapon.Shoot(clientId, position, direction, true);
             _rollbackService.Return();
         }
+
+        [ServerRpc]
+        private void PlayAnimationServerRpc()
+        {
+            _weapon.PlayShootAnimation();
+            PlayAnimationClientRpc();
+        }
+
+        [ClientRpc]
+        private void PlayAnimationClientRpc() => _weapon.PlayShootAnimation();
     }
 }

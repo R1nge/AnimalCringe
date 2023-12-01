@@ -27,7 +27,6 @@ namespace _Assets.Scripts.Weapons
         {
             if (CanShoot)
             {
-                //animator.SetTrigger("Shooting");
                 if (Physics.Raycast(origin, direction, out RaycastHit hit))
                 {
                     if (hit.transform.root.TryGetComponent(out NetworkObject networkObject))

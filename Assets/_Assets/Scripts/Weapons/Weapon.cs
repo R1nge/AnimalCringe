@@ -1,5 +1,4 @@
 ﻿using Unity.Netcode;
-using Unity.Netcode.Components;
 using UnityEngine;
 
 namespace _Assets.Scripts.Weapons
@@ -22,6 +21,12 @@ namespace _Assets.Scripts.Weapons
         protected abstract void OnTick();
 
         public abstract bool Shoot(ulong owner, Vector3 origin, Vector3 direction, bool isServer);
+
+        public void PlayShootAnimation()
+        {
+            animator.SetTrigger("Shooting");
+            Debug.LogError("Shooting animation");
+        }
 
         public virtual void Show() => gameObject.SetActive(false);
 
