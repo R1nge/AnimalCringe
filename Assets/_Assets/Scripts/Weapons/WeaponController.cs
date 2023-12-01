@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using _Assets.Scripts.Players;
 using _Assets.Scripts.Services.Gameplay;
@@ -11,8 +11,7 @@ namespace _Assets.Scripts.Weapons
     public class WeaponController : NetworkBehaviour
     {
         [SerializeField] private Camera playerCamera;
-        [SerializeField] private NetworkObject weaponParentPrefab;
-        [SerializeField] private List<Weapon> weaponPrefabs;
+        [SerializeField] private List<Weapon> weapons;
         private Weapon _weapon;
         private int _currentWeaponIndex;
         private PlayerInput _playerInput;
@@ -21,38 +20,10 @@ namespace _Assets.Scripts.Weapons
         [Inject]
         private void Inject(RollbackService rollbackService) => _rollbackService = rollbackService;
 
-        private void Awake() => _playerInput = GetComponent<PlayerInput>();
-
-        public override void OnNetworkSpawn()
+        private void Awake()
         {
-            if (!IsOwner) return;
-            SpawnWeaponServerRpc(_currentWeaponIndex);
-        }
-
-        [ServerRpc]
-        private void SpawnWeaponServerRpc(int weaponIndex, ServerRpcParams serverRpcParams = default)
-        {
-            NetworkObject weaponParent = Instantiate(weaponParentPrefab, transform);
-            weaponParent.SpawnWithOwnership(serverRpcParams.Receive.SenderClientId);
-            weaponParent.TrySetParent(transform);
-            _weapon = Instantiate(weaponPrefabs[weaponIndex], weaponParent.transform);
-            _weapon.GetComponent<NetworkObject>().SpawnWithOwnership(serverRpcParams.Receive.SenderClientId);
-            _weapon.GetComponent<NetworkObject>().TrySetParent(weaponParent);
-            _weapon.transform.localPosition = Vector3.zero;
-            AssignWeaponClientRpc(_weapon.GetComponent<NetworkObject>());
-        }
-
-        [ClientRpc]
-        private void AssignWeaponClientRpc(NetworkObjectReference networkObjectReference)
-        {
-            if (networkObjectReference.TryGet(out NetworkObject networkObject))
-            {
-                if (networkObject.TryGetComponent(out Weapon weapon))
-                {
-                    _weapon = weapon;
-                    _weapon.transform.localPosition = Vector3.zero;
-                }
-            }
+            _playerInput = GetComponent<PlayerInput>();
+            _weapon = weapons[_currentWeaponIndex];
         }
 
         private void Update()
@@ -62,19 +33,23 @@ namespace _Assets.Scripts.Weapons
 
             if (Input.GetMouseButton(0))
             {
-                if (_weapon.Shoot(OwnerClientId, playerCamera.transform.position, playerCamera.transform.forward))
+                Vector3 shootOrigin = playerCamera.transform.position;
+                Vector3 shootDirection = playerCamera.transform.forward;
+                if (_weapon.Shoot(OwnerClientId, shootOrigin, shootDirection, false))
                 {
-                    ShootServerRpc();
+                    Debug.LogError($"SHOOT ServerRpc");
+                    ShootServerRpc(OwnerClientId, shootOrigin, shootDirection);
                 }
             }
         }
 
         [ServerRpc]
-        private void ShootServerRpc(ServerRpcParams rpcParams = default)
+        private void ShootServerRpc(ulong clientId, Vector3 position, Vector3 direction)
         {
-            _rollbackService.Rollback(_rollbackService.CurrentTick);
-            _weapon.Shoot(rpcParams.Receive.SenderClientId, playerCamera.transform.position, playerCamera.transform.forward);
-            _rollbackService.Return();
+            
+            //_rollbackService.Rollback(_rollbackService.CurrentTick);
+            _weapon.Shoot(clientId, position, direction, true);
+            //_rollbackService.Return();
         }
     }
 }

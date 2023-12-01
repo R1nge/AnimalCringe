@@ -8,28 +8,31 @@ namespace _Assets.Scripts.Weapons
     {
         protected override void OnTick()
         {
-            if (!IsServer) return;
-            if (!IsSpawned) return;
-
-            if (TimeBeforeNextShot <= 0)
+            Debug.LogError($"TICK. TimeBeforeNextShot: {TimeBeforeNextShot}");
+            if (!CanShoot)
             {
-                CanShoot.Value = true;
-                TimeBeforeNextShot = 1 / (weaponConfig.FireRate / 60f);
-            }
-            else
-            {
-                CanShoot.Value = false;
-                TimeBeforeNextShot -= 1f / NetworkManager.NetworkTickSystem.TickRate;
+                if (TimeBeforeNextShot <= 0)
+                {
+                    CanShoot = true;
+                    TimeBeforeNextShot = 1 / (weaponConfig.FireRate / 60f);
+                }
+                else
+                {
+                    CanShoot = false;
+                    TimeBeforeNextShot -= 1f / NetworkManager.Singleton.NetworkTickSystem.TickRate;
+                }
             }
         }
 
-        public override bool Shoot(ulong owner, Vector3 origin, Vector3 direction)
+        public override bool Shoot(ulong owner, Vector3 origin, Vector3 direction, bool isServer)
         {
-            if (CanShoot.Value)
+            Debug.LogError($"Server?: {isServer}, Can shoot?: {CanShoot}");
+            if (CanShoot)
             {
-                animator.Animator.SetTrigger("Shooting");
+                //animator.SetTrigger("Shooting");
                 if (Physics.Raycast(origin, direction, out RaycastHit hit))
                 {
+                    Debug.LogError($"RAYCAST IsServer {isServer}");
                     if (hit.transform.root.TryGetComponent(out NetworkObject networkObject))
                     {
                         if (networkObject.OwnerClientId == owner)
@@ -37,16 +40,18 @@ namespace _Assets.Scripts.Weapons
                             Debug.LogError("Hit himself");
                             return false;
                         }
-                    }
 
-                    if (hit.transform.root.TryGetComponent(out IDamageable damageable))
-                    {
-                        if (IsServer)
+                        if (networkObject.TryGetComponent(out IDamageable damageable))
                         {
-                            damageable.TakeDamage(owner, weaponConfig.Damage);
-                        }
+                            Debug.LogError("HIT");
+                            if (isServer)
+                            {
+                                Debug.LogError("DAMAGE");
+                                damageable.TakeDamage(owner, weaponConfig.Damage);
+                            }
 
-                        return true;
+                            return true;
+                        }
                     }
                 }
             }

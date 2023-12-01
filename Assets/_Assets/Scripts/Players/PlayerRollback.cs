@@ -96,7 +96,7 @@ namespace _Assets.Scripts.Players
         {
             long tick = _rollbackService.CurrentTick % NetworkManager.NetworkTickSystem.TickRate;
             _playerRollbackData[tick] = new PlayerRollbackData(position, _rollbackService.CurrentTick);
-            Debug.LogError($"Added Data {serverRpcParams.Receive.SenderClientId}, ServerTick: {_rollbackService.CurrentTick}, Tick: {tick}");
+            //Debug.LogError($"Added Data {serverRpcParams.Receive.SenderClientId}, ServerTick: {_rollbackService.CurrentTick}, Tick: {tick}");
         }
 
         public override void OnNetworkDespawn() => NetworkManager.NetworkTickSystem.Tick -= OnTick;

@@ -40,7 +40,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6590772020654072440}
-  - component: {fileID: -815833404677150664}
   - component: {fileID: 5581557473600001488}
   m_Layer: 0
   m_Name: RaycastWeapon
@@ -66,26 +65,6 @@ Transform:
   - {fileID: 6721049623836615810}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-815833404677150664
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6836637861123615601}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2498284146
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
 --- !u!114 &5581557473600001488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99,7 +78,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponConfig: {fileID: 11400000, guid: 170974582b94b9c4e9e5e817b3ca07c8, type: 2}
-  animator: {fileID: 4770734790659502635}
+  animator: {fileID: 0}
 --- !u!1 &7552577764696783936
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,24 +4,24 @@ using UnityEngine;
 
 namespace _Assets.Scripts.Weapons
 {
-    public abstract class Weapon : NetworkBehaviour
+    public abstract class Weapon : MonoBehaviour
     {
         [SerializeField] protected WeaponConfig weaponConfig;
-        [SerializeField] protected NetworkAnimator animator;
-        protected NetworkVariable<bool> CanShoot;
+        [SerializeField] protected Animator animator;
+        protected bool CanShoot;
         protected float TimeBeforeNextShot;
 
         private void Awake()
         {
-            NetworkManager.NetworkTickSystem.Tick += Tick;
-            CanShoot = new NetworkVariable<bool>(true);
+            NetworkManager.Singleton.NetworkTickSystem.Tick += Tick;
+            CanShoot = true;
         }
 
         private void Tick() => OnTick();
 
         protected abstract void OnTick();
 
-        public abstract bool Shoot(ulong owner, Vector3 origin, Vector3 direction);
+        public abstract bool Shoot(ulong owner, Vector3 origin, Vector3 direction, bool isServer);
 
         public virtual void Show() => gameObject.SetActive(false);
 
