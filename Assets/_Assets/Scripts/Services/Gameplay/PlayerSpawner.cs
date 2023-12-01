@@ -36,14 +36,41 @@ namespace _Assets.Scripts.Services.Gameplay
         [ServerRpc(RequireOwnership = false)]
         public void RespawnServerRpc(ulong clientId)
         {
-            //TODO: don't destroy, but disable input and move to the spawn point instead
             if (NetworkManager.SpawnManager.GetPlayerNetworkObject(clientId))
             {
                 NetworkObject player = NetworkManager.SpawnManager.GetPlayerNetworkObject(clientId);
-                player.transform.position = spawnPositions[Random.Range(0, spawnPositions.Length)].position;
+
+                var clientRpc = new ClientRpcParams
+                {
+                    Send = new ClientRpcSendParams
+                    {
+                        TargetClientIds = new[]
+                        {
+                            clientId
+                        }
+                    }
+                };
+
+                int positionIndex = Random.Range(0, spawnPositions.Length);
+                player.transform.position = spawnPositions[positionIndex].position;
+                RespawnClientRpc(player, positionIndex, clientRpc);
                 player.GetComponent<PlayerInput>().EnableServerRpc(true);
                 player.GetComponent<Health>().Respawn();
                 Debug.LogError("Spawned the player");
+            }
+        }
+
+        [ClientRpc]
+        private void RespawnClientRpc(NetworkObjectReference player, int positionIndex, ClientRpcParams clientRpcParams)
+        {
+            if (player.TryGet(out NetworkObject networkPlayer))
+            {
+                if (networkPlayer.TryGetComponent(out CPMPlayer cpmPlayer))
+                {
+                    cpmPlayer.enabled = false;
+                    cpmPlayer.transform.position = spawnPositions[positionIndex].position;
+                    cpmPlayer.enabled = true;
+                }
             }
         }
     }
