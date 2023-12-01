@@ -26,12 +26,6 @@ namespace _Assets.Scripts.Weapons
         public override void OnNetworkSpawn()
         {
             if (!IsOwner) return;
-            StartCoroutine(SpawnWeapons_C());
-        }
-
-        private IEnumerator SpawnWeapons_C()
-        {
-            yield return null;
             SpawnWeaponServerRpc(_currentWeaponIndex);
         }
 
