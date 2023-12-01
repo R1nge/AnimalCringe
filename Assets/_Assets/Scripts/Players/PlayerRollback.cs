@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using _Assets.Scripts.Services.Gameplay;
-using Unity.Collections;
+﻿using _Assets.Scripts.Services.Gameplay;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
@@ -50,6 +46,7 @@ namespace _Assets.Scripts.Players
             for (int i = 0; i < _colliderPositions.Length; i++)
             {
                 _colliderPositions[i] = colliders[i].transform.position;
+                Debug.LogError($"POSITION: {colliders[i].transform.position}");
             }
 
             AddPlayerRollbackDataServerRpc(_colliderPositions);
@@ -59,11 +56,18 @@ namespace _Assets.Scripts.Players
         public void RollbackServerRpc(int tick)
         {
             Debug.Log($"Current tick: {_rollbackService.CurrentTick}, Data count: {_playerRollbackData.Length}, Last data tick: {_playerRollbackData[^1].Tick}");
-            for (int i = 0; i < _playerRollbackData.Length; i++)
+            for (int data = 0; data < _playerRollbackData.Length; data++)
             {
-                if (_playerRollbackData[i].Tick == tick)
+                for (int collider = 0; collider < colliders.Length; collider++)
                 {
-                    RollbackClientRpc(_playerRollbackData[i]);
+                    Debug.LogError("Rollback");
+                    Vector3 position = _playerRollbackData[data].Positions[collider];
+                    colliders[collider].transform.localPosition = transform.InverseTransformPoint(position);
+                }
+
+                if (_playerRollbackData[data].Tick == tick)
+                {
+                    RollbackClientRpc(_playerRollbackData[data]);
                     break;
                 }
             }
@@ -72,12 +76,11 @@ namespace _Assets.Scripts.Players
         [ClientRpc]
         private void RollbackClientRpc(PlayerRollbackData playerRollbackData)
         {
-            Debug.LogError("Rollback");
             for (int i = 0; i < colliders.Length; i++)
             {
+                Debug.LogError("Rollback");
                 Vector3 position = playerRollbackData.Positions[i];
-                colliders[i].transform.parent = null;
-                colliders[i].transform.position = position;
+                colliders[i].transform.localPosition = transform.InverseTransformPoint(position);
             }
         }
 
@@ -87,8 +90,10 @@ namespace _Assets.Scripts.Players
         [ClientRpc]
         private void ReturnClientRpc()
         {
-            colliders[0].transform.parent = transform;
-            colliders[0].transform.localPosition = _colliderPositionsStart[0];
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                colliders[i].transform.localPosition = _colliderPositionsStart[0];
+            }
         }
 
         [ServerRpc(Delivery = RpcDelivery.Unreliable)]

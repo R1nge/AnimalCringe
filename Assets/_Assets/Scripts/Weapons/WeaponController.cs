@@ -35,9 +35,15 @@ namespace _Assets.Scripts.Weapons
             {
                 Vector3 shootOrigin = playerCamera.transform.position;
                 Vector3 shootDirection = playerCamera.transform.forward;
+                
+                
+                
                 if (_weapon.Shoot(OwnerClientId, shootOrigin, shootDirection, false))
                 {
-                    Debug.LogError($"SHOOT ServerRpc");
+                    ShootServerRpc(OwnerClientId, shootOrigin, shootDirection);
+                }
+                else
+                {
                     ShootServerRpc(OwnerClientId, shootOrigin, shootDirection);
                 }
             }
@@ -46,10 +52,9 @@ namespace _Assets.Scripts.Weapons
         [ServerRpc]
         private void ShootServerRpc(ulong clientId, Vector3 position, Vector3 direction)
         {
-            
-            //_rollbackService.Rollback(_rollbackService.CurrentTick);
+            _rollbackService.Rollback(_rollbackService.CurrentTick - 128);
             _weapon.Shoot(clientId, position, direction, true);
-            //_rollbackService.Return();
+            _rollbackService.Return();
         }
     }
 }
