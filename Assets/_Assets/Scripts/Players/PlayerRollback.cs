@@ -13,7 +13,7 @@ namespace _Assets.Scripts.Players
     {
         [SerializeField] private Collider[] colliders;
         private RollbackService _rollbackService;
-        private List<PlayerRollbackData> _playerRollbackData;
+        private PlayerRollbackData[] _playerRollbackData;
         private Vector3[] _colliderPositionsStart;
         private Vector3[] _colliderPositions;
 
@@ -22,7 +22,6 @@ namespace _Assets.Scripts.Players
 
         private void Awake()
         {
-            _playerRollbackData = new List<PlayerRollbackData>();
             _colliderPositions = new Vector3[colliders.Length];
             _colliderPositionsStart = new Vector3[colliders.Length];
 
@@ -34,11 +33,15 @@ namespace _Assets.Scripts.Players
 
         public override void OnNetworkSpawn()
         {
+            _playerRollbackData = new PlayerRollbackData[NetworkManager.NetworkTickSystem.TickRate];
+
             if (IsServer)
             {
                 _rollbackService.AddPlayerRollbackServerRpc(this);
             }
+
             if (!IsOwner) return;
+
             NetworkManager.NetworkTickSystem.Tick += OnTick;
         }
 
@@ -55,8 +58,8 @@ namespace _Assets.Scripts.Players
         [ServerRpc(RequireOwnership = false)]
         public void RollbackServerRpc(int tick)
         {
-            Debug.Log($"Current tick: {_rollbackService.CurrentTick}, Data count: {_playerRollbackData.Count}, Last data tick: {_playerRollbackData[^1].Tick}");
-            for (int i = 0; i < _playerRollbackData.Count; i++)
+            Debug.Log($"Current tick: {_rollbackService.CurrentTick}, Data count: {_playerRollbackData.Length}, Last data tick: {_playerRollbackData[^1].Tick}");
+            for (int i = 0; i < _playerRollbackData.Length; i++)
             {
                 if (_playerRollbackData[i].Tick == tick)
                 {
@@ -91,13 +94,9 @@ namespace _Assets.Scripts.Players
         [ServerRpc(Delivery = RpcDelivery.Unreliable)]
         private void AddPlayerRollbackDataServerRpc(Vector3[] position, ServerRpcParams serverRpcParams = default)
         {
-            if (_playerRollbackData.Count > NetworkManager.NetworkTickSystem.TickRate)
-            {
-                _playerRollbackData.RemoveAt(0);
-            }
-
-            _playerRollbackData.Add(new PlayerRollbackData(position, _rollbackService.CurrentTick));
-            Debug.Log($"Added Data {serverRpcParams.Receive.SenderClientId}, Tick: {_rollbackService.CurrentTick}");
+            long tick = _rollbackService.CurrentTick % NetworkManager.NetworkTickSystem.TickRate;
+            _playerRollbackData[tick] = new PlayerRollbackData(position, _rollbackService.CurrentTick);
+            Debug.LogError($"Added Data {serverRpcParams.Receive.SenderClientId}, ServerTick: {_rollbackService.CurrentTick}, Tick: {tick}");
         }
 
         public override void OnNetworkDespawn() => NetworkManager.NetworkTickSystem.Tick -= OnTick;
