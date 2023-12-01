@@ -84,7 +84,8 @@ namespace _Assets.Scripts.Services.Gameplay
             {
                 if (networkObject.TryGetComponent(out KillPopup killPopup))
                 {
-                    killPopup.Show($"Killed {killedNickname}");
+                    //TODO: move it a bit lower the crosshair
+                    killPopup.Show($"{killedNickname}");
                 }
             }
         }

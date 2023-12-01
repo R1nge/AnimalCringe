@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using _Assets.Scripts.Players;
 using _Assets.Scripts.Services.Gameplay;
@@ -39,7 +38,7 @@ namespace _Assets.Scripts.Weapons
         [ServerRpc]
         private void SpawnWeaponServerRpc(int weaponIndex, ServerRpcParams serverRpcParams = default)
         {
-            NetworkObject weaponParent = Instantiate(weaponParentPrefab, transform.position, Quaternion.identity);
+            NetworkObject weaponParent = Instantiate(weaponParentPrefab, transform);
             weaponParent.SpawnWithOwnership(serverRpcParams.Receive.SenderClientId);
             weaponParent.TrySetParent(transform);
             _weapon = Instantiate(weaponPrefabs[weaponIndex], weaponParent.transform);
@@ -57,6 +56,7 @@ namespace _Assets.Scripts.Weapons
                 if (networkObject.TryGetComponent(out Weapon weapon))
                 {
                     _weapon = weapon;
+                    _weapon.transform.localPosition = Vector3.zero;
                 }
             }
         }
@@ -80,12 +80,6 @@ namespace _Assets.Scripts.Weapons
         {
             _rollbackService.Rollback(_rollbackService.CurrentTick);
             _weapon.Shoot(rpcParams.Receive.SenderClientId, playerCamera.transform.position, playerCamera.transform.forward);
-            StartCoroutine(Return());
-        }
-
-        private IEnumerator Return()
-        {
-            yield return null;
             _rollbackService.Return();
         }
     }
