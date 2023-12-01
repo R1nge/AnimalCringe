@@ -46,7 +46,7 @@ namespace _Assets.Scripts.Weapons
         [ServerRpc]
         private void ShootServerRpc(ulong clientId, Vector3 position, Vector3 direction)
         {
-            _rollbackService.Rollback(_rollbackService.CurrentTick - 128);
+            _rollbackService.Rollback(_rollbackService.CurrentTick);
             _weapon.Shoot(clientId, position, direction, true);
             _rollbackService.Return();
         }
