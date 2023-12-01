@@ -22,11 +22,7 @@ namespace _Assets.Scripts.Weapons
 
         public abstract bool Shoot(ulong owner, Vector3 origin, Vector3 direction, bool isServer);
 
-        public void PlayShootAnimation()
-        {
-            animator.SetTrigger("Shooting");
-            Debug.LogError("Shooting animation");
-        }
+        public void PlayShootAnimation() => animator.SetTrigger("Shooting");
 
         public virtual void Show() => gameObject.SetActive(false);
 

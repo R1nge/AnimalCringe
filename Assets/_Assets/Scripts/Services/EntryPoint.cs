@@ -23,7 +23,7 @@ namespace _Assets.Scripts.Services
 
         private void Awake()
         {
-            NetworkManager.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
         }
 
         private void OnLoadEventCompleted(string scenename, LoadSceneMode loadscenemode, List<ulong> clientscompleted, List<ulong> clientstimedout)
