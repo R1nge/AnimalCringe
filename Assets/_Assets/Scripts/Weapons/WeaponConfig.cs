@@ -7,8 +7,10 @@ namespace _Assets.Scripts.Weapons
     {
         [SerializeField] private int damage;
         [SerializeField] private float fireRate;
+        [SerializeField] private float range;
         
         public int Damage => damage;
         public float FireRate => fireRate;
+        public float Range => range;
     }
 }

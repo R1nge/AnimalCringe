@@ -1,22 +1,18 @@
-﻿using Unity.Netcode;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace _Assets.Scripts.Weapons
 {
     public abstract class Weapon : MonoBehaviour
     {
+        [SerializeField] protected LayerMask ignoreLayer;
         [SerializeField] protected WeaponConfig weaponConfig;
         [SerializeField] protected Animator animator;
         protected bool CanShoot;
         protected float TimeBeforeNextShot;
 
-        private void Awake()
-        {
-            
-            CanShoot = true;
-        }
+        private void Awake() => CanShoot = true;
 
-        public abstract void OnTick();
+        public abstract void OnTick(bool isServer);
 
         public abstract HitInfo Shoot(ulong owner, Vector3 origin, Vector3 direction, bool isServer);
 

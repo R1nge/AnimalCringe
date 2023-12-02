@@ -79,30 +79,26 @@ namespace _Assets.Scripts.Damageables
 
             if (_health.Value - damage <= 0)
             {
-                DieServerRpc(killer);
+                Die(killer);
             }
             else
             {
-                TakeDamageServerRpc(killer, damage);
+                _health.Value -= damage;
             }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        private void DieServerRpc(ulong killerId)
+        private void Die(ulong killerId)
         {
             _isDead.Value = true;
             _killService.KillServerRpc(OwnerClientId, killerId);
             _playerDeathController.Die();
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        private void TakeDamageServerRpc(ulong killer, int damage)
+        private void HealthChanged(float _, float value)
         {
-            _health.Value -= damage;
-            Debug.LogError($"Current health of {OwnerClientId} is {_health.Value}");
+            Debug.LogError("Health changed");
+            OnHealthChanged?.Invoke(value);
         }
-
-        private void HealthChanged(float _, float value) => OnHealthChanged?.Invoke(value);
 
         public override void OnDestroy()
         {

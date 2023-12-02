@@ -16,6 +16,7 @@ namespace _Assets.Scripts.Weapons
         private PlayerInput _playerInput;
         private RollbackService _rollbackService;
 
+
         [Inject]
         private void Inject(RollbackService rollbackService) => _rollbackService = rollbackService;
 
@@ -24,15 +25,13 @@ namespace _Assets.Scripts.Weapons
         public override void OnNetworkSpawn()
         {
             _weapon = weapons[_currentWeaponIndex];
-
-            if (IsOwner)
-            {
-                NetworkManager.Singleton.NetworkTickSystem.Tick += _weapon.OnTick;
-            }
+            NetworkManager.Singleton.NetworkTickSystem.Tick += OnTick;
         }
 
-        private void Update()
+        private void OnTick()
         {
+            _weapon.OnTick(IsServer);
+            
             if (!IsOwner) return;
             if (!_playerInput.Enabled) return;
 
@@ -53,12 +52,11 @@ namespace _Assets.Scripts.Weapons
         }
 
         [ServerRpc]
-        private void ShootServerRpc(ulong ownerId, ulong victimId, Vector3 position, Vector3 direction)
+        private void ShootServerRpc(ulong ownerId, ulong victimId, Vector3 shootOrigin, Vector3 shootDirection)
         {
-            Debug.LogError($"Hit Owner {ownerId}, Victim {victimId}");
-            _rollbackService.Rollback(victimId, _rollbackService.CurrentTick);
-            _weapon.Shoot(ownerId, position, direction, true);
-            _rollbackService.Return(victimId);
+            //_rollbackService.Rollback(victimId, _rollbackService.CurrentTick);
+            _weapon.Shoot(ownerId, shootOrigin, shootDirection, true);
+            //_rollbackService.Return(victimId);
         }
 
         [ServerRpc]

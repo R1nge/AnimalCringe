@@ -6,8 +6,9 @@ namespace _Assets.Scripts.Weapons
 {
     public class RaycastWeapon : Weapon
     {
-        public override void OnTick()
+        public override void OnTick(bool isServer)
         {
+            Debug.LogError("WEAPON TICK");
             if (!CanShoot)
             {
                 if (TimeBeforeNextShot <= 0)
@@ -27,29 +28,27 @@ namespace _Assets.Scripts.Weapons
         {
             var hitInfo = new HitInfo();
 
+            //So, the ray goes through the clients collider, thats why the client can't shoot host
+
             if (CanShoot)
             {
-                if (Physics.Raycast(origin, direction, out RaycastHit hit))
+                if (Physics.Raycast(origin, direction, out RaycastHit hit, weaponConfig.Range, ~ignoreLayer))
                 {
                     if (hit.transform.root.TryGetComponent(out NetworkObject networkObject))
                     {
-                        Debug.LogError("HIT");
                         hitInfo.Hit = true;
 
                         if (networkObject.OwnerClientId == owner)
                         {
-                            Debug.LogError("HIT SELF");
                             return hitInfo;
                         }
 
                         if (networkObject.TryGetComponent(out IDamageable damageable))
                         {
                             hitInfo.VictimId = networkObject.OwnerClientId;
-                            Debug.LogError($"HIT VICTIM {hitInfo.VictimId}");
 
                             if (isServer)
                             {
-                                Debug.LogError($"HIT SERVER {hitInfo.VictimId}");
                                 damageable.TakeDamage(owner, weaponConfig.Damage);
                             }
 
