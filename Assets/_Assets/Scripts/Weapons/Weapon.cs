@@ -12,13 +12,11 @@ namespace _Assets.Scripts.Weapons
 
         private void Awake()
         {
-            NetworkManager.Singleton.NetworkTickSystem.Tick += Tick;
+            
             CanShoot = true;
         }
 
-        private void Tick() => OnTick();
-
-        protected abstract void OnTick();
+        public abstract void OnTick();
 
         public abstract HitInfo Shoot(ulong owner, Vector3 origin, Vector3 direction, bool isServer);
 

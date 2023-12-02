@@ -6,7 +6,7 @@ namespace _Assets.Scripts.Weapons
 {
     public class RaycastWeapon : Weapon
     {
-        protected override void OnTick()
+        public override void OnTick()
         {
             if (!CanShoot)
             {

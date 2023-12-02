@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using _Assets.Scripts.Players;
 using _Assets.Scripts.Services.Gameplay;
 using Unity.Netcode;
@@ -22,7 +21,15 @@ namespace _Assets.Scripts.Weapons
 
         private void Awake() => _playerInput = GetComponent<PlayerInput>();
 
-        public override void OnNetworkSpawn() => _weapon = weapons[_currentWeaponIndex];
+        public override void OnNetworkSpawn()
+        {
+            _weapon = weapons[_currentWeaponIndex];
+
+            if (IsOwner)
+            {
+                NetworkManager.Singleton.NetworkTickSystem.Tick += _weapon.OnTick;
+            }
+        }
 
         private void Update()
         {
