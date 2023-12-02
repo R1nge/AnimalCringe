@@ -4,6 +4,7 @@ using Unity.Netcode;
 
 namespace _Assets.Scripts.Services.Gameplay
 {
+    //TODO: To do it right you would have to roll back all the players then do the raycast and resimulate it
     public class RollbackService : NetworkBehaviour
     {
         private int _currentTick;
@@ -28,14 +29,20 @@ namespace _Assets.Scripts.Services.Gameplay
             _playerRollbacks.Remove(clientId);
         }
 
-        public void Rollback(ulong clientId, int tick)
+        public void Rollback(int tick)
         {
-            _playerRollbacks[clientId].RollbackServerRpc(tick);
+            foreach (var keyValuePair in _playerRollbacks)
+            {
+                _playerRollbacks[keyValuePair.Key].RollbackServerRpc(tick);
+            }
         }
 
-        public void Return(ulong clientId)
+        public void Return()
         {
-            _playerRollbacks[clientId].ReturnServerRpc();
+            foreach (var keyValuePair in _playerRollbacks)
+            {
+                _playerRollbacks[keyValuePair.Key].ReturnServerRpc();
+            }
         }
 
         private void OnTick()

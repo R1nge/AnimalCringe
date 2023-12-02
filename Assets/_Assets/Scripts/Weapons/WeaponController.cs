@@ -42,21 +42,18 @@ namespace _Assets.Scripts.Weapons
 
                 PlayAnimationServerRpc();
 
-                HitInfo hitInfo = _weapon.Shoot(OwnerClientId, shootOrigin, shootDirection, false);
-
-                if (hitInfo.Hit)
-                {
-                    ShootServerRpc(OwnerClientId, hitInfo.VictimId, shootOrigin, shootDirection);
-                }
+                ShootServerRpc(OwnerClientId, shootOrigin, shootDirection);
             }
         }
 
         [ServerRpc]
-        private void ShootServerRpc(ulong ownerId, ulong victimId, Vector3 shootOrigin, Vector3 shootDirection)
+        private void ShootServerRpc(ulong ownerId, Vector3 shootOrigin, Vector3 shootDirection)
         {
-            _rollbackService.Rollback(victimId, _rollbackService.CurrentTick);
+            _rollbackService.Rollback(_rollbackService.CurrentTick);
             _weapon.Shoot(ownerId, shootOrigin, shootDirection, true);
-            _rollbackService.Return(victimId);
+            //TODO: resimulate everything to this tick
+            //So, move the player to the shot tick, then do the raycast, apply all of the inputs to this tick
+            _rollbackService.Return();
         }
 
         [ServerRpc]
