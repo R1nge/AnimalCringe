@@ -6,9 +6,8 @@ namespace _Assets.Scripts.Weapons
 {
     public class RaycastWeapon : Weapon
     {
-        public override void OnTick(bool isServer)
+        public override void OnTick()
         {
-            Debug.LogError("WEAPON TICK");
             if (!CanShoot)
             {
                 if (TimeBeforeNextShot <= 0)

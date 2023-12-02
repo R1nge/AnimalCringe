@@ -94,11 +94,7 @@ namespace _Assets.Scripts.Damageables
             _playerDeathController.Die();
         }
 
-        private void HealthChanged(float _, float value)
-        {
-            Debug.LogError("Health changed");
-            OnHealthChanged?.Invoke(value);
-        }
+        private void HealthChanged(float _, float value) => OnHealthChanged?.Invoke(value);
 
         public override void OnDestroy()
         {

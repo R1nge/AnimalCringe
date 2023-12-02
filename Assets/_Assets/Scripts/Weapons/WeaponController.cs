@@ -30,7 +30,7 @@ namespace _Assets.Scripts.Weapons
 
         private void OnTick()
         {
-            _weapon.OnTick(IsServer);
+            _weapon.OnTick();
             
             if (!IsOwner) return;
             if (!_playerInput.Enabled) return;
@@ -54,9 +54,9 @@ namespace _Assets.Scripts.Weapons
         [ServerRpc]
         private void ShootServerRpc(ulong ownerId, ulong victimId, Vector3 shootOrigin, Vector3 shootDirection)
         {
-            //_rollbackService.Rollback(victimId, _rollbackService.CurrentTick);
+            _rollbackService.Rollback(victimId, _rollbackService.CurrentTick);
             _weapon.Shoot(ownerId, shootOrigin, shootDirection, true);
-            //_rollbackService.Return(victimId);
+            _rollbackService.Return(victimId);
         }
 
         [ServerRpc]

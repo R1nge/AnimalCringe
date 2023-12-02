@@ -12,7 +12,7 @@ namespace _Assets.Scripts.Weapons
 
         private void Awake() => CanShoot = true;
 
-        public abstract void OnTick(bool isServer);
+        public abstract void OnTick();
 
         public abstract HitInfo Shoot(ulong owner, Vector3 origin, Vector3 direction, bool isServer);
 
