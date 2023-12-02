@@ -23,33 +23,39 @@ namespace _Assets.Scripts.Weapons
             }
         }
 
-        public override bool Shoot(ulong owner, Vector3 origin, Vector3 direction, bool isServer)
+        public override HitInfo Shoot(ulong owner, Vector3 origin, Vector3 direction, bool isServer)
         {
+            var hitInfo = new HitInfo();
+
             if (CanShoot)
             {
                 if (Physics.Raycast(origin, direction, out RaycastHit hit))
                 {
                     if (hit.transform.root.TryGetComponent(out NetworkObject networkObject))
                     {
+                        hitInfo.Hit = true;
+
                         if (networkObject.OwnerClientId == owner)
                         {
-                            return false;
+                            return hitInfo;
                         }
 
                         if (networkObject.TryGetComponent(out IDamageable damageable))
                         {
+                            hitInfo.VictimId = networkObject.OwnerClientId;
+
                             if (isServer)
                             {
                                 damageable.TakeDamage(owner, weaponConfig.Damage);
                             }
 
-                            return true;
+                            return hitInfo;
                         }
                     }
                 }
             }
 
-            return false;
+            return hitInfo;
         }
     }
 }

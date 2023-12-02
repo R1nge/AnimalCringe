@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using _Assets.Scripts.Players;
 using _Assets.Scripts.Services.Gameplay;
 using Unity.Netcode;
@@ -34,19 +35,23 @@ namespace _Assets.Scripts.Weapons
                 Vector3 shootDirection = playerCamera.transform.forward;
 
                 PlayAnimationServerRpc();
-                if (_weapon.Shoot(OwnerClientId, shootOrigin, shootDirection, false))
+
+                HitInfo hitInfo = _weapon.Shoot(OwnerClientId, shootOrigin, shootDirection, false);
+
+                if (hitInfo.Hit)
                 {
-                    ShootServerRpc(OwnerClientId, shootOrigin, shootDirection);
+                    ShootServerRpc(OwnerClientId, hitInfo.VictimId, shootOrigin, shootDirection);
                 }
             }
         }
 
         [ServerRpc]
-        private void ShootServerRpc(ulong clientId, Vector3 position, Vector3 direction)
+        private void ShootServerRpc(ulong ownerId, ulong victimId, Vector3 position, Vector3 direction)
         {
-            _rollbackService.Rollback(_rollbackService.CurrentTick);
-            _weapon.Shoot(clientId, position, direction, true);
-            _rollbackService.Return();
+            Debug.LogError($"Hit Owner {ownerId}, Victim {victimId}");
+            _rollbackService.Rollback(victimId, _rollbackService.CurrentTick);
+            _weapon.Shoot(ownerId, position, direction, true);
+            _rollbackService.Return(victimId);
         }
 
         [ServerRpc]
@@ -58,5 +63,19 @@ namespace _Assets.Scripts.Weapons
 
         [ClientRpc]
         private void PlayAnimationClientRpc() => _weapon.PlayShootAnimation();
+    }
+
+    public struct ShootInfo
+    {
+        private ulong _ownerId;
+        private Vector3 _shootOrigin;
+        private Vector3 _shootDirection;
+        private bool _isServer;
+    }
+
+    public struct HitInfo
+    {
+        public bool Hit;
+        public ulong VictimId;
     }
 }

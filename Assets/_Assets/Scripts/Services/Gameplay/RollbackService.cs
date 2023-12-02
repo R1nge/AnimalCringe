@@ -8,47 +8,35 @@ namespace _Assets.Scripts.Services.Gameplay
     {
         private NetworkVariable<int> _currentTick;
         public int CurrentTick => _currentTick.Value;
-        private readonly List<PlayerRollback> _playerRollbacks = new();
+        private readonly Dictionary<ulong, PlayerRollback> _playerRollbacks = new();
 
         private void Awake()
         {
             NetworkManager.Singleton.NetworkTickSystem.Tick += OnTick;
             _currentTick = new NetworkVariable<int>();
         }
-        
-        [ServerRpc(RequireOwnership = false)]
-        public void AddPlayerRollbackServerRpc(NetworkBehaviourReference playerRollback)
+
+        public void AddPlayer(NetworkBehaviourReference playerRollback, ulong clientId)
         {
             if (playerRollback.TryGet(out PlayerRollback playerRollbackComponent))
             {
-                _playerRollbacks.Add(playerRollbackComponent);    
+                _playerRollbacks.Add(clientId, playerRollbackComponent);
             }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void RemovePlayerRollbackServerRpc(NetworkBehaviourReference playerRollback)
+        public void RemovePlayer(ulong clientId)
         {
-            if (playerRollback.TryGet(out PlayerRollback playerRollbackComponent))
-            {
-                _playerRollbacks.Remove(playerRollbackComponent);
-                
-            }
+            _playerRollbacks.Remove(clientId);
         }
 
-        public void Rollback(int tick)
+        public void Rollback(ulong clientId, int tick)
         {
-            for (int i = 0; i < _playerRollbacks.Count; i++)
-            {
-                _playerRollbacks[i].RollbackServerRpc(tick);
-            }
+            _playerRollbacks[clientId].RollbackServerRpc(tick);
         }
 
-        public void Return()
+        public void Return(ulong clientId)
         {
-            for (int i = 0; i < _playerRollbacks.Count; i++)
-            {
-                _playerRollbacks[i].ReturnServerRpc();
-            }
+            _playerRollbacks[clientId].ReturnServerRpc();
         }
 
         private void OnTick()

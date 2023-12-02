@@ -31,14 +31,17 @@ namespace _Assets.Scripts.Players
         {
             _playerRollbackData = new PlayerRollbackData[NetworkManager.NetworkTickSystem.TickRate];
 
-            if (IsServer)
-            {
-                _rollbackService.AddPlayerRollbackServerRpc(this);
-            }
-
             if (!IsOwner) return;
 
+            AddPlayerRollbackServerRpc();
+
             NetworkManager.NetworkTickSystem.Tick += OnTick;
+        }
+
+        [ServerRpc]
+        private void AddPlayerRollbackServerRpc()
+        {
+            _rollbackService.AddPlayer(this, NetworkObject.OwnerClientId);
         }
 
         private void OnTick()
@@ -49,6 +52,13 @@ namespace _Assets.Scripts.Players
             }
 
             AddPlayerRollbackDataServerRpc(_colliderPositions);
+        }
+
+        [ServerRpc(Delivery = RpcDelivery.Unreliable)]
+        private void AddPlayerRollbackDataServerRpc(Vector3[] position, ServerRpcParams serverRpcParams = default)
+        {
+            long tick = _rollbackService.CurrentTick % NetworkManager.NetworkTickSystem.TickRate;
+            _playerRollbackData[tick] = new PlayerRollbackData(position, _rollbackService.CurrentTick);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -90,13 +100,6 @@ namespace _Assets.Scripts.Players
             {
                 colliders[i].transform.localPosition = _colliderPositionsStart[i];
             }
-        }
-
-        [ServerRpc(Delivery = RpcDelivery.Unreliable)]
-        private void AddPlayerRollbackDataServerRpc(Vector3[] position, ServerRpcParams serverRpcParams = default)
-        {
-            long tick = _rollbackService.CurrentTick % NetworkManager.NetworkTickSystem.TickRate;
-            _playerRollbackData[tick] = new PlayerRollbackData(position, _rollbackService.CurrentTick);
         }
 
         public override void OnNetworkDespawn() => NetworkManager.NetworkTickSystem.Tick -= OnTick;

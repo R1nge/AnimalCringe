@@ -16,6 +16,7 @@ namespace _Assets.Scripts.CompositionTree
         {
             builder.RegisterComponent(skinService);
 
+            builder.Register<JoinCodeHolder>(Lifetime.Singleton);
             builder.Register<NicknameService>(Lifetime.Singleton);
             builder.Register<ILogger, ConsoleLogger>(Lifetime.Singleton);
             builder.Register<SceneLoader>(Lifetime.Singleton);

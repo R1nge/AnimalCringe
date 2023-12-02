@@ -21,12 +21,14 @@ namespace _Assets.Scripts.UIs
         [SerializeField] private GameObject skinsMenu;
         private SceneLoader _sceneLoader;
         private NicknameService _nicknameService;
+        private JoinCodeHolder _joinCodeHolder;
 
         [Inject]
-        private void Inject(SceneLoader sceneLoader, NicknameService nicknameService)
+        private void Inject(SceneLoader sceneLoader, NicknameService nicknameService, JoinCodeHolder joinCodeHolder)
         {
             _sceneLoader = sceneLoader;
             _nicknameService = nicknameService;
+            _joinCodeHolder = joinCodeHolder;
         }
 
         private void Awake()
@@ -55,9 +57,8 @@ namespace _Assets.Scripts.UIs
                 join.interactable = true;
             }
         }
-
-        private string _joinCode;
-        private void SetJoinCode(string code) => _joinCode = code;
+        
+        private void SetJoinCode(string code) => _joinCodeHolder.SetCode(code);
 
         private void ShowSkins() => skinsMenu.SetActive(true);
 
@@ -70,7 +71,7 @@ namespace _Assets.Scripts.UIs
         {
             Allocation allocation = await RelayService.Instance.CreateAllocationAsync(5);
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
-            Debug.LogError($"Join code: {joinCode}");
+            _joinCodeHolder.SetCode(joinCode);
 
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetHostRelayData
             (
@@ -87,7 +88,8 @@ namespace _Assets.Scripts.UIs
 
         private async void Join()
         {
-            JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(_joinCode);
+            string joinCode = _joinCodeHolder.JoinCode;
+            JoinAllocation allocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
             
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetClientRelayData
             (

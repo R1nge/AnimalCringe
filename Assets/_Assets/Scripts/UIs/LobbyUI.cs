@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using _Assets.Scripts.Services;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,22 +12,31 @@ namespace _Assets.Scripts.UIs
 {
     public class LobbyUI : MonoBehaviour
     {
+        [SerializeField] private TextMeshProUGUI joinCodeText;
         [SerializeField] private Button start;
         private LifetimeScope _parent;
         private SceneLoader _sceneLoader;
+        private JoinCodeHolder _joinCodeHolder;
 
         [Inject]
-        private void Inject(LifetimeScope parent, SceneLoader sceneLoader)
+        private void Inject(LifetimeScope parent, SceneLoader sceneLoader, JoinCodeHolder joinCodeHolder)
         {
             _parent = parent;
             _sceneLoader = sceneLoader;
+            _joinCodeHolder = joinCodeHolder;
         }
 
         private void Start()
         {
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
-            start.gameObject.SetActive(NetworkManager.Singleton.IsServer);
-            start.onClick.AddListener(StartGame);
+
+            start.gameObject.SetActive(NetworkManager.Singleton.IsHost);
+
+            if (NetworkManager.Singleton.IsHost)
+            {
+                joinCodeText.text = _joinCodeHolder.JoinCode;
+                start.onClick.AddListener(StartGame);
+            }
         }
 
         private void StartGame() => LoadScene();

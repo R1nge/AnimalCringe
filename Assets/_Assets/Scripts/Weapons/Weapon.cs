@@ -20,7 +20,7 @@ namespace _Assets.Scripts.Weapons
 
         protected abstract void OnTick();
 
-        public abstract bool Shoot(ulong owner, Vector3 origin, Vector3 direction, bool isServer);
+        public abstract HitInfo Shoot(ulong owner, Vector3 origin, Vector3 direction, bool isServer);
 
         public void PlayShootAnimation() => animator.SetTrigger("Shooting");
 

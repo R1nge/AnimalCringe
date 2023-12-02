@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6729425335820654233}
   - component: {fileID: 820706700660198980}
   - component: {fileID: 2145080631344904199}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: WorldUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -111,6 +111,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4445819873112370732}
+  - component: {fileID: 5616974433510366316}
   - component: {fileID: 5378880736623957438}
   - component: {fileID: 7052046826197849263}
   - component: {fileID: 8704896395687854052}
@@ -125,7 +126,7 @@ GameObject:
   - component: {fileID: 3158640256116111053}
   - component: {fileID: 8987318978557331588}
   - component: {fileID: 7246983850191986234}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -152,6 +153,29 @@ Transform:
   - {fileID: 6904317228409306297}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &5616974433510366316
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3453741719714016187}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.52
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!143 &5378880736623957438
 CharacterController:
   m_ObjectHideFlags: 0
@@ -172,7 +196,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 3
   m_Height: 2
-  m_Radius: 0.5
+  m_Radius: 0.53
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -402,7 +426,7 @@ GameObject:
   - component: {fileID: 6991072592738777003}
   - component: {fileID: 2851475208549201708}
   - component: {fileID: 6961953305528366258}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -485,7 +509,7 @@ GameObject:
   - component: {fileID: 2232722390675451214}
   - component: {fileID: 2800238907958631955}
   - component: {fileID: 3229186618372278231}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Health
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -619,7 +643,7 @@ GameObject:
   - component: {fileID: 3352310473497177846}
   - component: {fileID: 7415571428505429246}
   - component: {fileID: 4826725293989316323}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: KillPopup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -753,7 +777,7 @@ GameObject:
   - component: {fileID: 6788024920397087857}
   - component: {fileID: 8001710853127507639}
   - component: {fileID: 376755310668507951}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Nickname
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -888,7 +912,7 @@ GameObject:
   - component: {fileID: 4129894730136883548}
   - component: {fileID: 4943127225369924982}
   - component: {fileID: 3493713813857031830}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HUD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -991,7 +1015,7 @@ GameObject:
   - component: {fileID: 6763391934207065310}
   - component: {fileID: 3401074763090671036}
   - component: {fileID: 2226459689583360615}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Hitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1032,7 +1056,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.54
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
@@ -1097,7 +1121,7 @@ GameObject:
   - component: {fileID: 328955658661484089}
   - component: {fileID: 1346508971880997944}
   - component: {fileID: 1890909211761883144}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1188,7 +1212,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2289729632104296197}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: WeaponParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1219,6 +1243,42 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2289729632104296197}
     m_Modifications:
+    - target: {fileID: 493676549016308636, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1879610595958518004, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2646524501822503877, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2698993522204280951, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2722095283004434187, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3164758391200750910, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3216976684490738972, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3437716349821113041, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6043126269434744842, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6590772020654072440, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1262,6 +1322,14 @@ PrefabInstance:
     - target: {fileID: 6836637861123615601, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
       propertyPath: m_Name
       value: RaycastWeapon
+      objectReference: {fileID: 0}
+    - target: {fileID: 6836637861123615601, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7552577764696783936, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
