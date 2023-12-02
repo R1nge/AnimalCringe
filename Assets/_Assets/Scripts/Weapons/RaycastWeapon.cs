@@ -40,7 +40,7 @@ namespace _Assets.Scripts.Weapons
                 if (Physics.RaycastNonAlloc(origin, direction, Hits, weaponConfig.Range, ~ignoreLayer) != 0)
                 {
                     //The first hit is always the player
-                    for (int i = 1; i < Hits.Length; i++)
+                    for (int i = 0; i < Hits.Length; i++)
                     {
                         if (Hits[i].transform.root.TryGetComponent(out NetworkObject networkObject))
                         {
@@ -48,7 +48,7 @@ namespace _Assets.Scripts.Weapons
 
                             if (networkObject.OwnerClientId == owner)
                             {
-                                return hitInfo;
+                                continue;
                             }
 
                             if (networkObject.TryGetComponent(out IDamageable damageable))
