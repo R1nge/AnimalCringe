@@ -40,36 +40,8 @@ namespace _Assets.Scripts.Services.Gameplay
             {
                 NetworkObject player = NetworkManager.SpawnManager.GetPlayerNetworkObject(clientId);
 
-                var clientRpc = new ClientRpcParams
-                {
-                    Send = new ClientRpcSendParams
-                    {
-                        TargetClientIds = new[]
-                        {
-                            clientId
-                        }
-                    }
-                };
-
-                int positionIndex = Random.Range(0, spawnPositions.Length);
-                player.transform.position = spawnPositions[positionIndex].position;
-                RespawnClientRpc(player, positionIndex, clientRpc);
                 player.GetComponent<PlayerInput>().EnableServerRpc(true);
                 player.GetComponent<Health>().Respawn();
-            }
-        }
-
-        [ClientRpc]
-        private void RespawnClientRpc(NetworkObjectReference player, int positionIndex, ClientRpcParams clientRpcParams)
-        {
-            if (player.TryGet(out NetworkObject networkPlayer))
-            {
-                if (networkPlayer.TryGetComponent(out CPMPlayer cpmPlayer))
-                {
-                    cpmPlayer.enabled = false;
-                    cpmPlayer.transform.position = spawnPositions[positionIndex].position;
-                    cpmPlayer.enabled = true;
-                }
             }
         }
     }

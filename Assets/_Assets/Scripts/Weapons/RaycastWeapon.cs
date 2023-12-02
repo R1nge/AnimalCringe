@@ -33,19 +33,23 @@ namespace _Assets.Scripts.Weapons
                 {
                     if (hit.transform.root.TryGetComponent(out NetworkObject networkObject))
                     {
+                        Debug.LogError("HIT");
                         hitInfo.Hit = true;
 
                         if (networkObject.OwnerClientId == owner)
                         {
+                            Debug.LogError("HIT SELF");
                             return hitInfo;
                         }
 
                         if (networkObject.TryGetComponent(out IDamageable damageable))
                         {
                             hitInfo.VictimId = networkObject.OwnerClientId;
+                            Debug.LogError($"HIT VICTIM {hitInfo.VictimId}");
 
                             if (isServer)
                             {
+                                Debug.LogError($"HIT SERVER {hitInfo.VictimId}");
                                 damageable.TakeDamage(owner, weaponConfig.Damage);
                             }
 
