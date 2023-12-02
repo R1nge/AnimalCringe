@@ -6,14 +6,13 @@ namespace _Assets.Scripts.Services.Gameplay
 {
     public class RollbackService : NetworkBehaviour
     {
-        private NetworkVariable<int> _currentTick;
-        public int CurrentTick => _currentTick.Value;
+        private int _currentTick;
+        public int CurrentTick => _currentTick;
         private readonly Dictionary<ulong, PlayerRollback> _playerRollbacks = new();
 
         private void Awake()
         {
             NetworkManager.Singleton.NetworkTickSystem.Tick += OnTick;
-            _currentTick = new NetworkVariable<int>();
         }
 
         public void AddPlayer(NetworkBehaviourReference playerRollback, ulong clientId)
@@ -42,7 +41,7 @@ namespace _Assets.Scripts.Services.Gameplay
         private void OnTick()
         {
             if (!IsServer) return;
-            _currentTick.Value++;
+            _currentTick++;
         }
     }
 }
