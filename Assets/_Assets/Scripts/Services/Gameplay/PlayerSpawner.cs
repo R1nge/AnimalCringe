@@ -39,9 +39,25 @@ namespace _Assets.Scripts.Services.Gameplay
             if (NetworkManager.SpawnManager.GetPlayerNetworkObject(clientId))
             {
                 NetworkObject player = NetworkManager.SpawnManager.GetPlayerNetworkObject(clientId);
+                player.GetComponent<CharacterController>().enabled = false;
 
+                int index = Random.Range(0, spawnPositions.Length);
+                RespawnClientRpc(index, player);   
+                
+                player.GetComponent<CharacterController>().enabled = true;
                 player.GetComponent<PlayerInput>().EnableServerRpc(true);
                 player.GetComponent<Health>().Respawn();
+            }
+        }
+
+        [ClientRpc]
+        private void RespawnClientRpc(int index, NetworkObjectReference player)
+        {
+            if (player.TryGet(out NetworkObject playerNetworkObject))
+            {
+                playerNetworkObject.GetComponent<CharacterController>().enabled = false;
+                playerNetworkObject.transform.position = spawnPositions[index].position;
+                playerNetworkObject.GetComponent<CharacterController>().enabled = true;
             }
         }
     }

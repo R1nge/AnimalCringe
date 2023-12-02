@@ -35,12 +35,6 @@ namespace _Assets.Scripts.Weapons
                 Vector3 shootDirection = playerCamera.transform.forward;
 
                 PlayAnimationServerRpc();
-                
-                if (IsServer)
-                {
-                    _weapon.Shoot(OwnerClientId, shootOrigin, shootDirection, true);
-                    return;
-                }
 
                 HitInfo hitInfo = _weapon.Shoot(OwnerClientId, shootOrigin, shootDirection, false);
 
