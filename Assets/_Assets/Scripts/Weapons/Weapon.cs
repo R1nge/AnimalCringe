@@ -10,7 +10,7 @@ namespace _Assets.Scripts.Weapons
         protected bool CanShoot;
         protected float TimeBeforeNextShot;
 
-        private void Awake() => CanShoot = true;
+        protected virtual void Awake() => CanShoot = true;
 
         public abstract void OnTick();
 

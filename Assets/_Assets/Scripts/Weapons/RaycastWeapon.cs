@@ -6,6 +6,14 @@ namespace _Assets.Scripts.Weapons
 {
     public class RaycastWeapon : Weapon
     {
+        protected RaycastHit[] Hits;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            Hits = new RaycastHit[5];
+        }
+
         public override void OnTick()
         {
             if (!CanShoot)
@@ -27,33 +35,36 @@ namespace _Assets.Scripts.Weapons
         {
             var hitInfo = new HitInfo();
 
-            //So, the ray goes through the clients collider, thats why the client can't shoot host
-
             if (CanShoot)
             {
-                if (Physics.Raycast(origin, direction, out RaycastHit hit, weaponConfig.Range, ~ignoreLayer))
+                if (Physics.RaycastNonAlloc(origin, direction, Hits, weaponConfig.Range, ~ignoreLayer) != 0)
                 {
-                    if (hit.transform.root.TryGetComponent(out NetworkObject networkObject))
+                    //The first hit is always the player
+                    for (int i = 1; i < Hits.Length; i++)
                     {
-                        hitInfo.Hit = true;
-
-                        if (networkObject.OwnerClientId == owner)
+                        if (Hits[i].transform.root.TryGetComponent(out NetworkObject networkObject))
                         {
-                            return hitInfo;
-                        }
+                            hitInfo.Hit = true;
 
-                        if (networkObject.TryGetComponent(out IDamageable damageable))
-                        {
-                            hitInfo.VictimId = networkObject.OwnerClientId;
-
-                            if (isServer)
+                            if (networkObject.OwnerClientId == owner)
                             {
-                                damageable.TakeDamage(owner, weaponConfig.Damage);
+                                return hitInfo;
                             }
 
-                            return hitInfo;
+                            if (networkObject.TryGetComponent(out IDamageable damageable))
+                            {
+                                hitInfo.VictimId = networkObject.OwnerClientId;
+
+                                if (isServer)
+                                {
+                                    damageable.TakeDamage(owner, weaponConfig.Damage);
+                                }
+
+                                return hitInfo;
+                            }
                         }
                     }
+                    
                 }
             }
 
