@@ -62,7 +62,7 @@ namespace _Assets.Scripts.Weapons
                 }
             }
 
-            hitInfo.VictimId = 999999999;
+            hitInfo.VictimId = ulong.MaxValue;
 
             return hitInfo;
         }
