@@ -62,7 +62,7 @@ namespace _Assets.Scripts.Weapons
         private void ShootServerRpc(ulong ownerId, Vector3 shootOrigin, Vector3 shootDirection)
         {
             _rollbackService.Rollback(_rollbackService.CurrentTick);
-            _weapon.Shoot(ownerId, shootOrigin, shootDirection, true);
+            _weapon.Shoot(ownerId, shootOrigin, shootDirection);
             //TODO: resimulate everything to this tick
             //So, move the player to the shot tick, then do the raycast, apply all of the inputs to this tick
             _rollbackService.Return();

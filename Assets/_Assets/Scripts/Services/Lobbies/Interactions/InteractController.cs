@@ -9,7 +9,7 @@ namespace _Assets.Scripts.Services.Lobbies.Interactions
 
         private void Update()
         {
-            if (IsOwner) return;
+            if (!IsOwner) return;
             if (Input.GetKeyDown(KeyCode.E))
             {
                 Vector3 origin = playerCamera.position;

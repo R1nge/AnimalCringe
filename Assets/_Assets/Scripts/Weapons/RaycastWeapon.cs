@@ -6,13 +6,7 @@ namespace _Assets.Scripts.Weapons
 {
     public class RaycastWeapon : Weapon
     {
-        protected RaycastHit[] Hits;
-
-        protected override void Awake()
-        {
-            base.Awake();
-            Hits = new RaycastHit[5];
-        }
+        protected RaycastHit[] Hits = new RaycastHit[5];
 
         public override void OnTick()
         {
@@ -31,18 +25,19 @@ namespace _Assets.Scripts.Weapons
             }
         }
 
-        public override HitInfo Shoot(ulong owner, Vector3 origin, Vector3 direction, bool isServer)
+        public override HitInfo Shoot(ulong owner, Vector3 origin, Vector3 direction)
         {
             var hitInfo = new HitInfo();
 
             if (CanShoot)
             {
-                if (Physics.RaycastNonAlloc(origin, direction, Hits, weaponConfig.Range, ~ignoreLayer) != 0)
+                var hits = Physics.RaycastNonAlloc(origin, direction, Hits, weaponConfig.Range); 
+                if (hits != 0)
                 {
-                    //The first hit is always the player
-                    for (int i = 0; i < Hits.Length; i++)
+                    for (int i = 0; i < hits; i++)
                     {
-                        if (Hits[i].transform.root.TryGetComponent(out NetworkObject networkObject))
+                        Debug.LogError($"Hits: {Hits[i].transform.name}");
+                        if (Hits[i].transform.TryGetComponent(out NetworkObject networkObject))
                         {
                             hitInfo.Hit = true;
 
@@ -55,7 +50,7 @@ namespace _Assets.Scripts.Weapons
                             {
                                 hitInfo.VictimId = networkObject.OwnerClientId;
 
-                                if (isServer)
+                                if (networkObject.OwnerClientId != owner)
                                 {
                                     damageable.TakeDamage(owner, weaponConfig.Damage);
                                 }
@@ -64,9 +59,10 @@ namespace _Assets.Scripts.Weapons
                             }
                         }
                     }
-                    
                 }
             }
+
+            hitInfo.VictimId = 999999999;
 
             return hitInfo;
         }

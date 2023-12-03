@@ -66,5 +66,11 @@ namespace _Assets.Scripts.Services.Lobbies
         }
 
         private Vector3 RandomPosition() => new(Random.Range(-5f, 5f), 0f, Random.Range(-5f, 5f));
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            _lobby.OnClientConnected -= SpawnPlayerServerRpc;
+        }
     }
 }

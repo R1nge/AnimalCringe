@@ -8,15 +8,15 @@ namespace _Assets.Scripts.Services.Lobbies
     {
         public event Action<ulong> OnClientConnected; 
         private readonly ILogger _logger;
-        private readonly Dictionary<ulong, LobbyData> _lobbyData = new();
+        private readonly Dictionary<ulong, LobbyPlayerData> _lobbyData = new();
 
-        public Dictionary<ulong, LobbyData> LobbyData => _lobbyData;
+        public Dictionary<ulong, LobbyPlayerData> LobbyData => _lobbyData;
 
         private Lobby(ILogger logger) => _logger = logger;
 
         public void AddPlayer(ulong clientId, int skinIndex, NetworkString nickname)
         {
-            if (_lobbyData.TryAdd(clientId, new LobbyData(clientId, skinIndex, nickname)))
+            if (_lobbyData.TryAdd(clientId, new LobbyPlayerData(clientId, skinIndex, nickname)))
             {
                 OnClientConnected?.Invoke(clientId);
                 _logger.Log("Successfully added player");

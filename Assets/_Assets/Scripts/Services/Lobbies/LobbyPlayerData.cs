@@ -2,13 +2,13 @@
 
 namespace _Assets.Scripts.Services.Lobbies
 {
-    public struct LobbyData
+    public struct LobbyPlayerData
     {
         public readonly ulong ClientId;
         public readonly int SelectedSkin;
         public NetworkString Nickname;
 
-        public LobbyData(ulong clientId, int selectedSkin, NetworkString nickname)
+        public LobbyPlayerData(ulong clientId, int selectedSkin, NetworkString nickname)
         {
             ClientId = clientId;
             SelectedSkin = selectedSkin;
