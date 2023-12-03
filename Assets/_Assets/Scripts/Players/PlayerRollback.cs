@@ -7,7 +7,7 @@ namespace _Assets.Scripts.Players
 {
     public class PlayerRollback : NetworkBehaviour
     {
-        [SerializeField] private Collider[] colliders;
+        [SerializeField] private PlayerHitBox[] colliders;
         private RollbackService _rollbackService;
         private PlayerRollbackData[] _playerRollbackData;
         private Vector3[] _colliderPositionsStart;
@@ -57,8 +57,8 @@ namespace _Assets.Scripts.Players
         [ServerRpc(Delivery = RpcDelivery.Unreliable)]
         private void AddPlayerRollbackDataServerRpc(Vector3[] collidersPosition, ServerRpcParams serverRpcParams = default)
         {
-            long tick = _rollbackService.CurrentTick % NetworkManager.NetworkTickSystem.TickRate;
-            _playerRollbackData[tick] = new PlayerRollbackData(_rollbackService.CurrentTick, collidersPosition);
+            long tick = NetworkManager.NetworkTickSystem.ServerTime.Tick % NetworkManager.NetworkTickSystem.TickRate;
+            _playerRollbackData[tick] = new PlayerRollbackData(NetworkManager.NetworkTickSystem.ServerTime.Tick, collidersPosition);
         }
 
         [ServerRpc(RequireOwnership = false)]

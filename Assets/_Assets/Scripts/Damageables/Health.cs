@@ -8,7 +8,7 @@ using VContainer;
 
 namespace _Assets.Scripts.Damageables
 {
-    public class Health : NetworkBehaviour, IDamageable
+    public class Health : NetworkBehaviour
     {
         public event Action<float> OnHealthChanged;
         [SerializeField] private float maxHealth;

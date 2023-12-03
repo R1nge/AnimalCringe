@@ -7,16 +7,10 @@ namespace _Assets.Scripts.Services.Gameplay
     //TODO: To do it right you would have to roll back all the players then do the raycast and resimulate it
     public class RollbackService : NetworkBehaviour
     {
-        private int _currentTick;
-        public int CurrentTick => _currentTick;
         private readonly Dictionary<ulong, PlayerRollback> _playerRollbacks = new();
 
-        private void Awake()
-        {
-            NetworkManager.Singleton.NetworkTickSystem.Tick += OnTick;
-            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
-        }
-        
+        private void Awake() => NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
+
         private void OnClientDisconnect(ulong clientId)
         {
             if (IsServer)
@@ -49,12 +43,6 @@ namespace _Assets.Scripts.Services.Gameplay
             {
                 _playerRollbacks[keyValuePair.Key].ReturnServerRpc();
             }
-        }
-
-        private void OnTick()
-        {
-            if (!IsServer) return;
-            _currentTick++;
         }
     }
 }

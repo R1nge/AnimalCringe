@@ -575,7 +575,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colliders:
-  - {fileID: 6763391934207065310}
+  - {fileID: 8853002886337039541}
 --- !u!114 &8640651104320001868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1204,6 +1204,7 @@ GameObject:
   - component: {fileID: 6763391934207065310}
   - component: {fileID: 3401074763090671036}
   - component: {fileID: 2226459689583360615}
+  - component: {fileID: 8853002886337039541}
   m_Layer: 6
   m_Name: Hitbox
   m_TagString: Untagged
@@ -1264,7 +1265,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8201276715923281601}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1299,6 +1300,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8853002886337039541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8201276715923281601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29df4d761c514b1a861e9c35e6a6c9f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8339431244426782078
 GameObject:
   m_ObjectHideFlags: 0

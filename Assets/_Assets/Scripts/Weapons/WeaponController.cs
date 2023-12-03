@@ -32,9 +32,15 @@ namespace _Assets.Scripts.Weapons
         {
             _weapon.OnTick();
 
+
             if (!IsOwner) return;
             if (!_playerInput.Enabled) return;
             if (_weapon == null) return;
+
+            Debug.LogError($"[CLIENT] TICK {NetworkManager.Singleton.NetworkTickSystem.LocalTime.Tick}");
+            Debug.LogError($"[SERVER] TICK {NetworkManager.Singleton.NetworkTickSystem.ServerTime.Tick}");
+            Debug.LogError($"TICK DELAY {NetworkManager.Singleton.NetworkTickSystem.LocalTime.Tick - NetworkManager.Singleton.ServerTime.Tick}");
+
 
             if (Input.GetMouseButton(0))
             {
@@ -42,8 +48,8 @@ namespace _Assets.Scripts.Weapons
                 Vector3 shootDirection = playerCamera.transform.forward;
 
                 PlayAnimationServerRpc();
-
-                ShootServerRpc(OwnerClientId, shootOrigin, shootDirection);
+                //So, the game state should be rolled back to the shooter local tick
+                ShootServerRpc(OwnerClientId, shootOrigin, shootDirection, NetworkManager.Singleton.NetworkTickSystem.LocalTime.Tick);
             }
         }
 
@@ -59,9 +65,10 @@ namespace _Assets.Scripts.Weapons
         }
 
         [ServerRpc]
-        private void ShootServerRpc(ulong ownerId, Vector3 shootOrigin, Vector3 shootDirection)
+        private void ShootServerRpc(ulong ownerId, Vector3 shootOrigin, Vector3 shootDirection, int tick)
         {
-            _rollbackService.Rollback(_rollbackService.CurrentTick);
+            _rollbackService.Rollback(tick);
+            //Since I'm rolling back colliders, colliders should be damageable
             _weapon.Shoot(ownerId, shootOrigin, shootDirection);
             //TODO: resimulate everything to this tick
             //So, move the player to the shot tick, then do the raycast, apply all of the inputs to this tick

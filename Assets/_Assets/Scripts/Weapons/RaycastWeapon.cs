@@ -31,23 +31,23 @@ namespace _Assets.Scripts.Weapons
 
             if (CanShoot)
             {
-                var hits = Physics.RaycastNonAlloc(origin, direction, Hits, weaponConfig.Range); 
+                var hits = Physics.RaycastNonAlloc(origin, direction, Hits, weaponConfig.Range);
                 if (hits != 0)
                 {
                     for (int i = 0; i < hits; i++)
                     {
                         Debug.LogError($"Hits: {Hits[i].transform.name}");
-                        if (Hits[i].transform.TryGetComponent(out NetworkObject networkObject))
+                        if (Hits[i].transform.TryGetComponent(out IDamageable damageable))
                         {
                             hitInfo.Hit = true;
 
-                            if (networkObject.OwnerClientId == owner)
+                            if (Hits[i].transform.root.TryGetComponent(out NetworkObject networkObject))
                             {
-                                continue;
-                            }
+                                if (networkObject.OwnerClientId == owner)
+                                {
+                                    continue;
+                                }
 
-                            if (networkObject.TryGetComponent(out IDamageable damageable))
-                            {
                                 hitInfo.VictimId = networkObject.OwnerClientId;
 
                                 if (networkObject.OwnerClientId != owner)
