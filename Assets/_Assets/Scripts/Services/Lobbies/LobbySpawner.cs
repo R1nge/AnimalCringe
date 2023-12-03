@@ -14,19 +14,15 @@ namespace _Assets.Scripts.Services.Lobbies
     {
         private Lobby _lobby;
         private SkinService _skinService;
-        private JoinCodeHolder _joinCodeHolder;
 
         [Inject]
-        private void Inject(Lobby lobby, SkinService skinService, JoinCodeHolder joinCodeHolder)
+        private void Inject(Lobby lobby, SkinService skinService)
         {
             _lobby = lobby;
             _skinService = skinService;
-            _joinCodeHolder = joinCodeHolder;
         }
 
         private void Awake() => _lobby.OnClientConnected += SpawnPlayerServerRpc;
-
-        private void Start() => Debug.LogError(_joinCodeHolder.JoinCode);
 
         [ServerRpc(RequireOwnership = false)]
         private void SpawnPlayerServerRpc(ulong clientId)

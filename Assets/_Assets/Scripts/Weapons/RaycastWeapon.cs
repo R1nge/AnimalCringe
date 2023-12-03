@@ -6,7 +6,7 @@ namespace _Assets.Scripts.Weapons
 {
     public class RaycastWeapon : Weapon
     {
-        protected RaycastHit[] Hits = new RaycastHit[5];
+        protected readonly RaycastHit[] Hits = new RaycastHit[5];
 
         public override void OnTick()
         {
