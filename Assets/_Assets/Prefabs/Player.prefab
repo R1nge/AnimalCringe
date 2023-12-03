@@ -602,6 +602,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshRenderers:
   - {fileID: 8724840653483692978}
+  - {fileID: 6961953305528366258}
 --- !u!1 &3549373680437111994
 GameObject:
   m_ObjectHideFlags: 0

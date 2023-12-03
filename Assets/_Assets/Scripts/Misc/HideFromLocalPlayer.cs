@@ -1,5 +1,6 @@
 ﻿using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace _Assets.Scripts.Misc
 {
@@ -13,7 +14,7 @@ namespace _Assets.Scripts.Misc
             {
                 for (int i = 0; i < meshRenderers.Length; i++)
                 {
-                    meshRenderers[i].enabled = false;
+                    meshRenderers[i].shadowCastingMode = ShadowCastingMode.ShadowsOnly;
                 }
             }
         }

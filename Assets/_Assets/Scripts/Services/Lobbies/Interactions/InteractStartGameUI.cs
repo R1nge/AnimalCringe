@@ -17,10 +17,8 @@ namespace _Assets.Scripts.Services.Lobbies.Interactions
 
         public void Interact()
         {
-            Debug.LogError("INTERACT");
             if (IsServer)
             {
-                Debug.LogError("INTERACT SERVER");
                 LoadScene();
             }
         }
