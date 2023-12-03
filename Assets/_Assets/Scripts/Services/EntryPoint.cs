@@ -31,8 +31,14 @@ namespace _Assets.Scripts.Services
             if (!IsServer) return;
             if (clientscompleted.Count + clientstimedout.Count == _lobby.LobbyData.Count)
             {
-                _gameStateMachine.SwitchState(GameStateType.Game);
+                StartCoroutine(StartGame_C());
             }
+        }
+
+        private IEnumerator StartGame_C()
+        {
+            yield return null;
+            _gameStateMachine.SwitchState(GameStateType.Game);
         }
     }
 }

@@ -14,6 +14,15 @@ namespace _Assets.Scripts.Services.Gameplay
         private void Awake()
         {
             NetworkManager.Singleton.NetworkTickSystem.Tick += OnTick;
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
+        }
+        
+        private void OnClientDisconnect(ulong clientId)
+        {
+            if (IsServer)
+            {
+                RemovePlayer(clientId);
+            }
         }
 
         public void AddPlayer(NetworkBehaviourReference playerRollback, ulong clientId)
@@ -24,10 +33,7 @@ namespace _Assets.Scripts.Services.Gameplay
             }
         }
 
-        public void RemovePlayer(ulong clientId)
-        {
-            _playerRollbacks.Remove(clientId);
-        }
+        private void RemovePlayer(ulong clientId) => _playerRollbacks.Remove(clientId);
 
         public void Rollback(int tick)
         {
