@@ -518,7 +518,7 @@ MonoBehaviour:
   runDeacceleration: 10
   airAcceleration: 2
   airDecceleration: 2
-  airControl: 0.3
+  airControl: 0.75
   sideStrafeAcceleration: 50
   sideStrafeSpeed: 1
   jumpSpeed: 8
