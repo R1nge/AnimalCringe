@@ -29,7 +29,7 @@ namespace _Assets.Scripts.Services.Lobbies
         {
             if (!_lobby.LobbyData.ContainsKey(clientId)) return;
             NetworkObject player = Instantiate(_skinService.GetSkinSo(_lobby.LobbyData[clientId].SelectedSkin).LobbySkin);
-            player.SpawnWithOwnership(clientId);
+            player.SpawnAsPlayerObject(clientId);
 
             player.transform.position = RandomPosition();
         }
@@ -40,13 +40,17 @@ namespace _Assets.Scripts.Services.Lobbies
             if (NetworkManager.SpawnManager.GetPlayerNetworkObject(clientId))
             {
                 NetworkObject player = NetworkManager.SpawnManager.GetPlayerNetworkObject(clientId);
+
+                Vector3 position = RandomPosition();
+                
                 player.GetComponent<CharacterController>().enabled = false;
-
-                RespawnClientRpc(RandomPosition(), player);
-
+                player.transform.position = position;
                 player.GetComponent<CharacterController>().enabled = true;
-                player.GetComponent<PlayerInput>().EnableServerRpc(true);
-                player.GetComponent<Health>().Respawn();
+                RespawnClientRpc(position, player);
+            }
+            else
+            {
+                Debug.LogError("[SERVER] Player not found");
             }
         }
 
