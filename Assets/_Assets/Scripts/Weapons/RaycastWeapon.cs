@@ -50,11 +50,8 @@ namespace _Assets.Scripts.Weapons
 
                                 hitInfo.VictimId = networkObject.OwnerClientId;
 
-                                if (networkObject.OwnerClientId != owner)
-                                {
-                                    damageable.TakeDamage(owner, weaponConfig.Damage);
-                                }
-
+                                damageable.TakeDamage(owner, weaponConfig.Damage);
+                                
                                 return hitInfo;
                             }
                         }

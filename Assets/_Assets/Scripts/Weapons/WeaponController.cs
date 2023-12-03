@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using _Assets.Scripts.Players;
 using _Assets.Scripts.Services.Gameplay;
 using Unity.Netcode;
@@ -30,26 +31,34 @@ namespace _Assets.Scripts.Weapons
 
         private void OnTick()
         {
-            _weapon.OnTick();
-
-
             if (!IsOwner) return;
             if (!_playerInput.Enabled) return;
             if (_weapon == null) return;
 
-            Debug.LogError($"[CLIENT] TICK {NetworkManager.Singleton.NetworkTickSystem.LocalTime.Tick}");
-            Debug.LogError($"[SERVER] TICK {NetworkManager.Singleton.NetworkTickSystem.ServerTime.Tick}");
-            Debug.LogError($"TICK DELAY {NetworkManager.Singleton.NetworkTickSystem.LocalTime.Tick - NetworkManager.Singleton.ServerTime.Tick}");
+            _weapon.OnTick();
+        }
 
+        private void Update()
+        {
+            if (!IsOwner) return;
+            if (!_playerInput.Enabled) return;
+            if (_weapon == null) return;
 
             if (Input.GetMouseButton(0))
             {
                 Vector3 shootOrigin = playerCamera.transform.position;
                 Vector3 shootDirection = playerCamera.transform.forward;
 
-                PlayAnimationServerRpc();
-                //So, the game state should be rolled back to the shooter local tick
-                ShootServerRpc(OwnerClientId, shootOrigin, shootDirection, NetworkManager.Singleton.NetworkTickSystem.LocalTime.Tick);
+                if (!IsServer)
+                {
+                    PlayAnimationServerRpc();
+                    //So, the game state should be rolled back to the shooter local tick
+                    ShootServerRpc(OwnerClientId, shootOrigin, shootDirection, NetworkManager.Singleton.NetworkTickSystem.LocalTime.Tick);
+                }
+                else
+                {
+                    _weapon.Shoot(OwnerClientId, shootOrigin, shootDirection);
+                }
             }
         }
 
