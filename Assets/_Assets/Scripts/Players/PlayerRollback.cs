@@ -55,10 +55,10 @@ namespace _Assets.Scripts.Players
         }
 
         [ServerRpc(Delivery = RpcDelivery.Unreliable)]
-        private void AddPlayerRollbackDataServerRpc(Vector3[] position, ServerRpcParams serverRpcParams = default)
+        private void AddPlayerRollbackDataServerRpc(Vector3[] collidersPosition, ServerRpcParams serverRpcParams = default)
         {
             long tick = _rollbackService.CurrentTick % NetworkManager.NetworkTickSystem.TickRate;
-            _playerRollbackData[tick] = new PlayerRollbackData(position, _rollbackService.CurrentTick);
+            _playerRollbackData[tick] = new PlayerRollbackData(_rollbackService.CurrentTick, collidersPosition);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -66,12 +66,6 @@ namespace _Assets.Scripts.Players
         {
             for (int data = 0; data < _playerRollbackData.Length; data++)
             {
-                // for (int collider = 0; collider < colliders.Length; collider++)
-                // {
-                //     Vector3 position = _playerRollbackData[data].Positions[collider];
-                //     colliders[collider].transform.localPosition = transform.InverseTransformPoint(position);
-                // }
-
                 if (_playerRollbackData[data].Tick == tick)
                 {
                     RollbackClientRpc(_playerRollbackData[data]);
@@ -85,7 +79,7 @@ namespace _Assets.Scripts.Players
         {
             for (int i = 0; i < colliders.Length; i++)
             {
-                Vector3 position = playerRollbackData.Positions[i];
+                Vector3 position = playerRollbackData.ColliderPositions[i];
                 colliders[i].transform.localPosition = transform.InverseTransformPoint(position);
             }
         }
