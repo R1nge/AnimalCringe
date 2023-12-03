@@ -879,7 +879,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &1089054125
@@ -1170,8 +1170,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1301922381}
   - component: {fileID: 1301922380}
-  - component: {fileID: 1301922382}
   - component: {fileID: 1301922383}
+  - component: {fileID: 1301922382}
   m_Layer: 0
   m_Name: KillZone
   m_TagString: Untagged
@@ -1198,8 +1198,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1000, y: 1, z: 1000}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1000, y: 5, z: 1000}
+  m_Center: {x: 0, y: -500, z: 0}
 --- !u!4 &1301922381
 Transform:
   m_ObjectHideFlags: 0
@@ -1209,7 +1209,7 @@ Transform:
   m_GameObject: {fileID: 1301922379}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

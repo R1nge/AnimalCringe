@@ -10,10 +10,12 @@ namespace _Assets.Scripts.Services.Lobbies
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.transform.root.TryGetComponent(out NetworkObject networkObject))
+            if (!IsServer) return;
+            if (other.transform.TryGetComponent(out NetworkObject networkObject))
             {
                 if (networkObject.TryGetComponent(out CPMPlayer player))
                 {
+                    Debug.LogError("RESPAWN");
                     _lobbySpawner.RespawnServerRpc(networkObject.OwnerClientId);
                 }
             }
