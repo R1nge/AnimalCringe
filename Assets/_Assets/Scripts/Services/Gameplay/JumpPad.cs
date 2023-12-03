@@ -1,5 +1,4 @@
-﻿using System;
-using Unity.Netcode;
+﻿using Unity.Netcode;
 using UnityEngine;
 
 namespace _Assets.Scripts.Services.Gameplay
@@ -13,7 +12,6 @@ namespace _Assets.Scripts.Services.Gameplay
             if (other.transform.root.TryGetComponent(out CPMPlayer player))
             {
                 player.AddForce(Vector3.up * force);
-                Debug.LogError("TRIGGER");
             }
         }
     }
