@@ -7,9 +7,11 @@ namespace _Assets.Scripts.Services.Skins
     public class SkinSO : ScriptableObject
     {
         [SerializeField] private Sprite icon;
-        [SerializeField] private NetworkObject skin;
+        [SerializeField] private NetworkObject gameSkin;
+        [SerializeField] private NetworkObject lobbySkin;
         
         public Sprite Icon => icon;
-        public NetworkObject Skin => skin;
+        public NetworkObject GameSkin => gameSkin;
+        public NetworkObject LobbySkin => lobbySkin;
     }
 }

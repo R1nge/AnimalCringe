@@ -22,7 +22,7 @@ namespace _Assets.Scripts.Services.Factories
 
         public NetworkObject CreatePlayer(ulong clientId)
         {
-            NetworkObject playerInstance = _objectResolver.Instantiate(_skinService.GetSkinSo(_lobby.LobbyData[clientId].SelectedSkin).Skin);
+            NetworkObject playerInstance = _objectResolver.Instantiate(_skinService.GetSkinSo(_lobby.LobbyData[clientId].SelectedSkin).GameSkin);
             playerInstance.SpawnAsPlayerObject(clientId);
             
             if (playerInstance.TryGetComponent(out NicknameUI nicknameUI))

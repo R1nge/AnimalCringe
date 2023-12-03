@@ -218,7 +218,7 @@ Transform:
   m_GameObject: {fileID: 3453741719714016187}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -4.632227, y: 0, z: 3.4915278}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -384,8 +384,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 1346508971880997944}
-  weapons:
-  - {fileID: 5160306121817569322}
+  weapons: []
 --- !u!114 &7230570041527357770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1425,17 +1424,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
---- !u!114 &5160306121817569322 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5581557473600001488, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}
-  m_PrefabInstance: {fileID: 786084709488619002}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7e168a0d1974bbc8ad0fcf10a8d9bc2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &5881591004859207554 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6590772020654072440, guid: a2f1d7852d555a84b9a716ea06dc239c, type: 3}

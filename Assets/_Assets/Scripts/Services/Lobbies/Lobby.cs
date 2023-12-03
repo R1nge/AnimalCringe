@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using _Assets.Scripts.Misc;
 
 namespace _Assets.Scripts.Services.Lobbies
 {
     public class Lobby
     {
+        public event Action<ulong> OnClientConnected; 
         private readonly ILogger _logger;
         private readonly Dictionary<ulong, LobbyData> _lobbyData = new();
-        
+
         public Dictionary<ulong, LobbyData> LobbyData => _lobbyData;
 
         private Lobby(ILogger logger) => _logger = logger;
@@ -16,6 +18,7 @@ namespace _Assets.Scripts.Services.Lobbies
         {
             if (_lobbyData.TryAdd(clientId, new LobbyData(clientId, skinIndex, nickname)))
             {
+                OnClientConnected?.Invoke(clientId);
                 _logger.Log("Successfully added player");
             }
             else

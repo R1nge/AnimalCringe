@@ -31,9 +31,10 @@ namespace _Assets.Scripts.Weapons
         private void OnTick()
         {
             _weapon.OnTick();
-            
+
             if (!IsOwner) return;
             if (!_playerInput.Enabled) return;
+            if (_weapon == null) return;
 
             if (Input.GetMouseButton(0))
             {
@@ -44,6 +45,17 @@ namespace _Assets.Scripts.Weapons
 
                 ShootServerRpc(OwnerClientId, shootOrigin, shootDirection);
             }
+        }
+
+        public void RemoveWeapons()
+        {
+            for (int i = 0; i < weapons.Count; i++)
+            {
+                Destroy(weapons[i]);
+            }
+
+            weapons.Clear();
+            _weapon = null;
         }
 
         [ServerRpc]

@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Skin1
   m_EditorClassIdentifier: 
   icon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  skin: {fileID: 7052046826197849263, guid: 14f9f9cba04840a4cbcbe0f7c23997db, type: 3}
+  gameSkin: {fileID: 7052046826197849263, guid: 14f9f9cba04840a4cbcbe0f7c23997db, type: 3}
+  lobbySkin: {fileID: 7908495305578069328, guid: feae6c2f816027f4da3d048ff2251d62, type: 3}
