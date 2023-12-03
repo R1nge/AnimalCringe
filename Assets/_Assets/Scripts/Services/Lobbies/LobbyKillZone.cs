@@ -15,7 +15,6 @@ namespace _Assets.Scripts.Services.Lobbies
             {
                 if (networkObject.TryGetComponent(out CPMPlayer player))
                 {
-                    Debug.LogError("RESPAWN");
                     _lobbySpawner.RespawnServerRpc(networkObject.OwnerClientId);
                 }
             }
