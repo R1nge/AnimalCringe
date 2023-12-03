@@ -503,11 +503,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57a25e417e634fc7980b78c16bfd5c80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localPlayerLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  hitBoxes:
-  - {fileID: 6763391934207065310}
 --- !u!1 &3549373680437111994
 GameObject:
   m_ObjectHideFlags: 0
@@ -1270,7 +1265,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 100
+  far clip plane: 500
   field of view: 60
   orthographic: 0
   orthographic size: 5

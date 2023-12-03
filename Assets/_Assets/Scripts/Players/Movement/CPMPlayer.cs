@@ -79,6 +79,13 @@ public class CPMPlayer : NetworkBehaviour
         _characterController.Move(_playerVelocity * Time.deltaTime);
     }
 
+    public void AddForce(Vector3 force)
+    {
+        ApplyFriction(0);
+        _playerVelocity += force;
+        _characterController.Move(_playerVelocity * Time.deltaTime);
+    }
+
     private void QueueJump()
     {
         if (holdJumpToBhop)
