@@ -1,5 +1,6 @@
 ﻿using _Assets.Scripts.Services;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
@@ -23,6 +24,7 @@ namespace _Assets.Scripts
 
         private async UniTask SingIn()
         {
+            DOTween.Init();
             await UnityServices.InitializeAsync();
             AuthenticationService.Instance.SignedIn += () =>
             {
