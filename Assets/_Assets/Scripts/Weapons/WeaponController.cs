@@ -81,7 +81,7 @@ namespace _Assets.Scripts.Weapons
             _weapon.Shoot(ownerId, shootOrigin, shootDirection);
             //TODO: resimulate everything to this tick
             //So, move the player to the shot tick, then do the raycast, apply all of the inputs to this tick
-            _rollbackService.Return();
+            _rollbackService.Return(tick);
         }
 
         [ServerRpc]

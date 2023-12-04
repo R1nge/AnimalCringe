@@ -37,11 +37,11 @@ namespace _Assets.Scripts.Services.Gameplay
             }
         }
 
-        public void Return()
+        public void Return(int tick)
         {
             foreach (var keyValuePair in _playerRollbacks)
             {
-                _playerRollbacks[keyValuePair.Key].ReturnServerRpc();
+                _playerRollbacks[keyValuePair.Key].ReturnServerRpc(tick);
             }
         }
     }

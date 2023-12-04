@@ -1,22 +1,9 @@
 ﻿using System.Collections.Generic;
 using _Assets.Scripts;
 using _Assets.Scripts.Players;
+using _Assets.Scripts.Players.Movement;
 using Unity.Netcode;
 using UnityEngine;
-
-struct Cmd : INetworkSerializable
-{
-    public float ForwardMove;
-    public float RightMove;
-    public bool WishJump;
-
-    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-    {
-        serializer.SerializeValue(ref ForwardMove);
-        serializer.SerializeValue(ref RightMove);
-        serializer.SerializeValue(ref WishJump);
-    }
-}
 
 public class CPMPlayer : NetworkBehaviour
 {
@@ -36,11 +23,20 @@ public class CPMPlayer : NetworkBehaviour
     private PlayerInput _playerInput;
     private ClientNetworkTransform _clientNetworkTransform;
 
-    private Vector3 _playerVelocity = Vector3.zero;
+    private Vector3 _velocity = Vector3.zero;
 
     // Q3: players can queue the next jump just before he hits the ground
-    private readonly Queue<Cmd> _playerInputQueue = new();
-    private Cmd _lastInput;
+    private readonly Queue<PlayerInputCommand> _playerInputQueue = new();
+    private PlayerInputCommand _lastInput;
+
+    public Vector3 Velocity => _velocity;
+
+    public void RollbackSetVelocity(Vector3 velocity)
+    {
+        _velocity = velocity;
+        _characterController.Move(_velocity * Time.deltaTime);
+    }
+
 
     private void Awake()
     {
@@ -76,14 +72,14 @@ public class CPMPlayer : NetworkBehaviour
             AirMove(_lastInput);
         }
 
-        _characterController.Move(_playerVelocity * Time.deltaTime);
+        _characterController.Move(_velocity * Time.deltaTime);
     }
 
     public void AddForce(Vector3 force)
     {
         ApplyFriction(0);
-        _playerVelocity += force;
-        _characterController.Move(_playerVelocity * Time.deltaTime);
+        _velocity += force;
+        _characterController.Move(_velocity * Time.deltaTime);
     }
 
     private void QueueJump()
@@ -102,7 +98,7 @@ public class CPMPlayer : NetworkBehaviour
 
     private void GetInput()
     {
-        _lastInput = new Cmd
+        _lastInput = new PlayerInputCommand
         {
             ForwardMove = Input.GetAxisRaw("Vertical"),
             RightMove = Input.GetAxisRaw("Horizontal")
@@ -110,13 +106,13 @@ public class CPMPlayer : NetworkBehaviour
     }
 
     [ServerRpc(Delivery = RpcDelivery.Unreliable)]
-    private void SendInputServerRpc(Cmd cmd) => _playerInputQueue.Enqueue(cmd);
+    private void SendInputServerRpc(PlayerInputCommand playerInputCommand) => _playerInputQueue.Enqueue(playerInputCommand);
 
     [ServerRpc(Delivery = RpcDelivery.Unreliable)]
     private void MoveServerRpc()
     {
         if (_playerInputQueue.Count <= 0) return;
-        Cmd inputData = _playerInputQueue.Dequeue();
+        PlayerInputCommand inputData = _playerInputQueue.Dequeue();
         if (_characterController.isGrounded)
         {
             GroundMove(inputData);
@@ -126,10 +122,10 @@ public class CPMPlayer : NetworkBehaviour
             AirMove(inputData);
         }
 
-        _characterController.Move(_playerVelocity);
+        _characterController.Move(_velocity);
     }
 
-    private void GroundMove(Cmd input)
+    private void GroundMove(PlayerInputCommand input)
     {
         if (!_lastInput.WishJump)
             ApplyFriction(1.0f);
@@ -145,11 +141,11 @@ public class CPMPlayer : NetworkBehaviour
 
         Accelerate(wishDir, wishSpeed, runAcceleration);
 
-        _playerVelocity.y = -gravity * Time.deltaTime;
+        _velocity.y = -gravity * Time.deltaTime;
 
         if (_lastInput.WishJump)
         {
-            _playerVelocity.y = jumpSpeed;
+            _velocity.y = jumpSpeed;
             _lastInput.WishJump = false;
             _clientNetworkTransform.Interpolate = false;
         }
@@ -159,7 +155,7 @@ public class CPMPlayer : NetworkBehaviour
         }
     }
 
-    private void AirMove(Cmd input)
+    private void AirMove(PlayerInputCommand input)
     {
         var wishDir = new Vector3(input.RightMove, 0, input.ForwardMove);
         wishDir = transform.TransformDirection(wishDir);
@@ -171,7 +167,7 @@ public class CPMPlayer : NetworkBehaviour
 
         // CPM: Aircontrol
         float wishSpeed2 = wishSpeed;
-        float accel = Vector3.Dot(_playerVelocity, wishDir) < 0 ? airDecceleration : airAcceleration;
+        float accel = Vector3.Dot(_velocity, wishDir) < 0 ? airDecceleration : airAcceleration;
         // If the player is ONLY strafing left or right
         if (input.ForwardMove == 0 && input.RightMove != 0)
         {
@@ -185,42 +181,42 @@ public class CPMPlayer : NetworkBehaviour
             AirControl(wishDir, wishSpeed2, input);
         // !CPM: Aircontrol
 
-        _playerVelocity.y -= gravity * Time.deltaTime;
+        _velocity.y -= gravity * Time.deltaTime;
     }
 
-    private void AirControl(Vector3 wishDir, float wishSpeed, Cmd input)
+    private void AirControl(Vector3 wishDir, float wishSpeed, PlayerInputCommand input)
     {
         // Can't control movement if not moving forward or backward
         if (Mathf.Abs(input.ForwardMove) < 0.001 || Mathf.Abs(wishSpeed) < 0.001)
             return;
-        float speedY = _playerVelocity.y;
-        _playerVelocity.y = 0;
+        float speedY = _velocity.y;
+        _velocity.y = 0;
         /* Next two lines are equivalent to idTech's VectorNormalize() */
-        float speed = _playerVelocity.magnitude;
-        _playerVelocity.Normalize();
+        float speed = _velocity.magnitude;
+        _velocity.Normalize();
 
-        float dot = Vector3.Dot(_playerVelocity, wishDir);
+        float dot = Vector3.Dot(_velocity, wishDir);
         float k = 32;
         k *= airControl * dot * dot * Time.deltaTime;
 
         // Change direction while slowing down
         if (dot > 0)
         {
-            _playerVelocity.x = _playerVelocity.x * speed + wishDir.x * k;
-            _playerVelocity.y = _playerVelocity.y * speed + wishDir.y * k;
-            _playerVelocity.z = _playerVelocity.z * speed + wishDir.z * k;
+            _velocity.x = _velocity.x * speed + wishDir.x * k;
+            _velocity.y = _velocity.y * speed + wishDir.y * k;
+            _velocity.z = _velocity.z * speed + wishDir.z * k;
 
-            _playerVelocity.Normalize();
+            _velocity.Normalize();
         }
 
-        _playerVelocity.x *= speed;
-        _playerVelocity.y = speedY; // Note this line
-        _playerVelocity.z *= speed;
+        _velocity.x *= speed;
+        _velocity.y = speedY; // Note this line
+        _velocity.z *= speed;
     }
 
     private void ApplyFriction(float frictionMultiplier)
     {
-        Vector3 vec = _playerVelocity; // Equivalent to: VectorCopy();
+        Vector3 vec = _velocity; // Equivalent to: VectorCopy();
 
         vec.y = 0.0f;
         float speed = vec.magnitude;
@@ -240,13 +236,13 @@ public class CPMPlayer : NetworkBehaviour
         if (speed > 0)
             newSpeed /= speed;
 
-        _playerVelocity.x *= newSpeed;
-        _playerVelocity.z *= newSpeed;
+        _velocity.x *= newSpeed;
+        _velocity.z *= newSpeed;
     }
 
     private void Accelerate(Vector3 wishDir, float wishSpeed, float accel)
     {
-        float currentSpeed = Vector3.Dot(_playerVelocity, wishDir);
+        float currentSpeed = Vector3.Dot(_velocity, wishDir);
         float deltaSpeed = wishSpeed - currentSpeed;
         if (deltaSpeed <= 0)
             return;
@@ -254,7 +250,7 @@ public class CPMPlayer : NetworkBehaviour
         if (acceleratedSpeed > deltaSpeed)
             acceleratedSpeed = deltaSpeed;
 
-        _playerVelocity.x += acceleratedSpeed * wishDir.x;
-        _playerVelocity.z += acceleratedSpeed * wishDir.z;
+        _velocity.x += acceleratedSpeed * wishDir.x;
+        _velocity.z += acceleratedSpeed * wishDir.z;
     }
 }

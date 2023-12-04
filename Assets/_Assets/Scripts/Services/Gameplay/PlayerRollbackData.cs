@@ -1,5 +1,5 @@
 ﻿using System;
-using Unity.Collections;
+using _Assets.Scripts.Players.Movement;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -8,24 +8,29 @@ namespace _Assets.Scripts.Services.Gameplay
     public struct PlayerRollbackData : INetworkSerializable, IEquatable<PlayerRollbackData>
     {
         public int Tick;
-        public Vector3[] ColliderPositions;
+        public Vector3 Position;
+        public Quaternion Rotation;
+        public Vector3 Velocity;
 
-
-        public PlayerRollbackData(int tick, Vector3[] colliderPositions)
+        public PlayerRollbackData(int tick, Vector3 position, Quaternion rotation, Vector3 velocity)
         {
             Tick = tick;
-            ColliderPositions = colliderPositions;
+            Position = position;
+            Rotation = rotation;
+            Velocity = velocity;
         }
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref Tick);
-            serializer.SerializeValue(ref ColliderPositions);
+            serializer.SerializeValue(ref Position);
+            serializer.SerializeValue(ref Rotation);
+            serializer.SerializeValue(ref Velocity);
         }
 
         public bool Equals(PlayerRollbackData other)
         {
-            return Equals(ColliderPositions, other.ColliderPositions) && Tick == other.Tick;
+            return Tick == other.Tick && Position.Equals(other.Position) && Rotation.Equals(other.Rotation) && Velocity.Equals(other.Velocity);
         }
 
         public override bool Equals(object obj)
@@ -35,7 +40,7 @@ namespace _Assets.Scripts.Services.Gameplay
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(ColliderPositions, Tick);
+            return HashCode.Combine(Tick, Position, Rotation, Velocity);
         }
     }
 }

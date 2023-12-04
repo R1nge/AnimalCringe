@@ -1,4 +1,5 @@
-﻿using _Assets.Scripts.Services.Gameplay;
+﻿using System;
+using _Assets.Scripts.Services.Gameplay;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
@@ -7,24 +8,16 @@ namespace _Assets.Scripts.Players
 {
     public class PlayerRollback : NetworkBehaviour
     {
-        [SerializeField] private PlayerHitBox[] colliders;
         private RollbackService _rollbackService;
         private PlayerRollbackData[] _playerRollbackData;
-        private Vector3[] _colliderPositionsStart;
-        private Vector3[] _colliderPositions;
+        private CPMPlayer _player;
 
         [Inject]
         private void Inject(RollbackService rollbackService) => _rollbackService = rollbackService;
 
         private void Awake()
         {
-            _colliderPositions = new Vector3[colliders.Length];
-            _colliderPositionsStart = new Vector3[colliders.Length];
-
-            for (int i = 0; i < colliders.Length; i++)
-            {
-                _colliderPositionsStart[i] = colliders[i].transform.localPosition;
-            }
+            _player = GetComponent<CPMPlayer>();
         }
 
         public override void OnNetworkSpawn()
@@ -46,19 +39,14 @@ namespace _Assets.Scripts.Players
 
         private void OnTick()
         {
-            for (int i = 0; i < _colliderPositions.Length; i++)
-            {
-                _colliderPositions[i] = colliders[i].transform.position;
-            }
-
-            AddPlayerRollbackDataServerRpc(_colliderPositions);
+            AddPlayerRollbackDataServerRpc(transform.position, transform.rotation);
         }
 
         [ServerRpc(Delivery = RpcDelivery.Unreliable)]
-        private void AddPlayerRollbackDataServerRpc(Vector3[] collidersPosition, ServerRpcParams serverRpcParams = default)
+        private void AddPlayerRollbackDataServerRpc(Vector3 position, Quaternion rotation, ServerRpcParams serverRpcParams = default)
         {
             long tick = NetworkManager.NetworkTickSystem.ServerTime.Tick % NetworkManager.NetworkTickSystem.TickRate;
-            _playerRollbackData[tick] = new PlayerRollbackData(NetworkManager.NetworkTickSystem.ServerTime.Tick, collidersPosition);
+            _playerRollbackData[tick] = new PlayerRollbackData(NetworkManager.NetworkTickSystem.ServerTime.Tick, position, rotation, _player.Velocity);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -77,23 +65,48 @@ namespace _Assets.Scripts.Players
         [ClientRpc]
         private void RollbackClientRpc(PlayerRollbackData playerRollbackData)
         {
-            for (int i = 0; i < colliders.Length; i++)
-            {
-                Vector3 position = playerRollbackData.ColliderPositions[i];
-                colliders[i].transform.localPosition = transform.InverseTransformPoint(position);
-            }
+            Vector3 position = playerRollbackData.Position;
+            Quaternion rotation = playerRollbackData.Rotation;
+            transform.SetPositionAndRotation(position, rotation);
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void ReturnServerRpc() => ReturnClientRpc();
+        public void ReturnServerRpc(int tickWhenRollbackHappen)
+        {
+            long currentTick = NetworkManager.NetworkTickSystem.ServerTime.Tick % NetworkManager.NetworkTickSystem.TickRate;
+
+            long delta = currentTick - tickWhenRollbackHappen;
+
+            for (int data = 0; data < _playerRollbackData.Length; data++)
+            {
+                if (_playerRollbackData[data].Tick == tickWhenRollbackHappen)
+                {
+                    int rollbackModulo = tickWhenRollbackHappen % (int) NetworkManager.NetworkTickSystem.TickRate;
+                    ResetPlayerPositionClientRpc(_playerRollbackData[rollbackModulo]);
+                    for (int i = 0; i < delta; i++)
+                    {
+                        int moduloTick = (tickWhenRollbackHappen + i) % (int) NetworkManager.NetworkTickSystem.TickRate;
+                        Debug.LogError($"[SERVER] MODULO TICK {moduloTick}");
+                        ReturnClientRpc(_playerRollbackData[moduloTick]);
+                    }
+
+                    break;
+                }
+            }
+        }
 
         [ClientRpc]
-        private void ReturnClientRpc()
+        private void ResetPlayerPositionClientRpc(PlayerRollbackData playerRollbackData)
         {
-            for (int i = 0; i < colliders.Length; i++)
-            {
-                colliders[i].transform.localPosition = _colliderPositionsStart[i];
-            }
+            Vector3 position = playerRollbackData.Position;
+            Quaternion rotation = playerRollbackData.Rotation;
+            transform.SetPositionAndRotation(position, rotation);
+        }
+
+        [ClientRpc]
+        private void ReturnClientRpc(PlayerRollbackData playerRollbackData)
+        {
+            _player.RollbackSetVelocity(playerRollbackData.Velocity);
         }
 
         public override void OnNetworkDespawn() => NetworkManager.NetworkTickSystem.Tick -= OnTick;
