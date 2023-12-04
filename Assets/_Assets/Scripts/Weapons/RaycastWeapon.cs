@@ -36,7 +36,7 @@ namespace _Assets.Scripts.Weapons
                 {
                     for (int i = 0; i < hits; i++)
                     {
-                        Debug.LogError($"Hits: {Hits[i].transform.name}");
+                        //Debug.LogError($"Hits: {Hits[i].transform.name}");
                         if (Hits[i].transform.TryGetComponent(out IDamageable damageable))
                         {
                             hitInfo.Hit = true;

@@ -9,9 +9,15 @@ namespace _Assets.Scripts.Services.Gameplay
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.transform.root.TryGetComponent(out CPMPlayer player))
+            if (other.transform.TryGetComponent(out CPMPlayer player))
             {
                 player.AddForce(Vector3.up * force);
+                return;
+            }
+
+            if (other.transform.root.TryGetComponent(out CPMPlayer playerRoot))
+            {
+                playerRoot.AddForce(Vector3.up * force);
             }
         }
     }

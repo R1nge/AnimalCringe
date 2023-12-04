@@ -74,9 +74,10 @@ namespace _Assets.Scripts.Players
         public void ReturnServerRpc(int tickWhenRollbackHappen)
         {
             long currentTick = NetworkManager.NetworkTickSystem.ServerTime.Tick % NetworkManager.NetworkTickSystem.TickRate;
+            long delta = (currentTick - tickWhenRollbackHappen)  % NetworkManager.NetworkTickSystem.TickRate;
 
-            long delta = currentTick - tickWhenRollbackHappen;
-
+            Debug.LogError($"DELTA: {delta}");
+            
             for (int data = 0; data < _playerRollbackData.Length; data++)
             {
                 if (_playerRollbackData[data].Tick == tickWhenRollbackHappen)
@@ -86,7 +87,7 @@ namespace _Assets.Scripts.Players
                     for (int i = 0; i < delta; i++)
                     {
                         int moduloTick = (tickWhenRollbackHappen + i) % (int) NetworkManager.NetworkTickSystem.TickRate;
-                        Debug.LogError($"[SERVER] MODULO TICK {moduloTick}");
+                        //Set the velocity to rollback tick
                         ReturnClientRpc(_playerRollbackData[moduloTick]);
                     }
 
