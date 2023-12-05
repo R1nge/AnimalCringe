@@ -63,29 +63,24 @@ namespace _Assets.Scripts.Players
         [ServerRpc(RequireOwnership = false)]
         public void RollbackServerRpc(double time)
         {
-            //It freezes the position, because it will be fed to the server
-
-            for (int data = 0; data < _playerRollbackData.Length; data++)
+            //It freezes the position, because the rollback position will be fed to the server and then rolled back again?
+            for (int i = 0; i < _playerRollbackData.Length; i++)
             {
-                for (int i = 0; i < _playerRollbackData.Length; i++)
+                //Get the closest tick
+                if (Math.Abs(_playerRollbackData[i].Time - time) <= 1f / NetworkManager.NetworkTickSystem.TickRate)
                 {
-                    //TODO: find the closest tick
-                    if (Math.Abs(_playerRollbackData[i].Time - time) <= 1f / NetworkManager.NetworkTickSystem.TickRate)
-                    {
-                        PlayerRollbackData first = _playerRollbackData[i]; //0
+                    PlayerRollbackData current = _playerRollbackData[i];
+                    PlayerRollbackData previous = i == 0 ? _playerRollbackData[^1] : _playerRollbackData[i - 1];
 
-                        PlayerRollbackData second = i == 0 ? _playerRollbackData[^1] : _playerRollbackData[i - 1];
+                    var delta = (float)(current.Time - previous.Time);
+                    float interpolation = Mathf.Clamp01((float)(time - previous.Time) / delta);
 
-                        var delta = (float)(first.Time - second.Time);
-                        float t = Mathf.Clamp01((float)(time - second.Time) / delta);
+                    Vector3 position = Vector3.Lerp(current.ColliderPositions[0], previous.ColliderPositions[0], interpolation);
 
-                        Vector3 position = Vector3.Lerp(first.ColliderPositions[0], second.ColliderPositions[0], t);
+                    Debug.LogError($"Rollback LERP: {interpolation}");
+                    colliders[0].transform.localPosition = transform.InverseTransformPoint(position);
 
-                        Debug.LogError($"Rollback LERP: {t}");
-                        colliders[0].transform.localPosition = transform.InverseTransformPoint(position);
-
-                        break;
-                    }
+                    break;
                 }
             }
         }
