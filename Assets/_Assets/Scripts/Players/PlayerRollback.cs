@@ -58,7 +58,7 @@ namespace _Assets.Scripts.Players
         private void AddPlayerRollbackDataServerRpc(Vector3[] collidersPosition, ServerRpcParams serverRpcParams = default)
         {
             long tick = NetworkManager.NetworkTickSystem.ServerTime.Tick % NetworkManager.NetworkTickSystem.TickRate;
-            _playerRollbackData[tick] = new PlayerRollbackData(NetworkManager.NetworkTickSystem.ServerTime.Tick, collidersPosition);
+            _playerRollbackData[tick] = new PlayerRollbackData((int)tick, collidersPosition);
         }
 
         [ServerRpc(RequireOwnership = false)]
