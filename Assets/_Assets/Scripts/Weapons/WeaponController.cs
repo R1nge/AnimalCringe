@@ -52,8 +52,7 @@ namespace _Assets.Scripts.Weapons
                 if (!IsServer)
                 {
                     PlayAnimationServerRpc();
-                    //So, the game state should be rolled back to the shooter local tick
-                    ShootServerRpc(OwnerClientId, shootOrigin, shootDirection, NetworkManager.Singleton.NetworkTickSystem.LocalTime.Tick);
+                    ShootServerRpc(OwnerClientId, shootOrigin, shootDirection, NetworkManager.Singleton.NetworkTickSystem.ServerTime.Time);
                 }
                 else
                 {
@@ -62,27 +61,11 @@ namespace _Assets.Scripts.Weapons
             }
         }
 
-        public void RemoveWeapons()
-        {
-            for (int i = 0; i < weapons.Count; i++)
-            {
-                Destroy(weapons[i]);
-            }
-
-            weapons.Clear();
-            _weapon = null;
-        }
-
         [ServerRpc]
-        private void ShootServerRpc(ulong ownerId, Vector3 shootOrigin, Vector3 shootDirection, int tick)
+        private void ShootServerRpc(ulong ownerId, Vector3 shootOrigin, Vector3 shootDirection, double shootTime)
         {
-            tick -= 1; //The client transform has a 1 tick of interpolation, so account for that
-            Debug.LogError($"[SERVER] Rollback tick: {tick}, Server Tick {NetworkManager.Singleton.NetworkTickSystem.ServerTime.Tick}, Delta {NetworkManager.Singleton.NetworkTickSystem.ServerTime.Tick - tick}");
-            _rollbackService.Rollback(tick);
-            //Since I'm rolling back colliders, colliders should be damageable
+            _rollbackService.Rollback(shootTime);
             _weapon.Shoot(ownerId, shootOrigin, shootDirection);
-            //TODO: resimulate everything to this tick
-            //So, move the player to the shot tick, then do the raycast, apply all of the inputs to this tick
             _rollbackService.Return();
         }
 

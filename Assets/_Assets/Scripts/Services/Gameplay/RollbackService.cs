@@ -29,11 +29,11 @@ namespace _Assets.Scripts.Services.Gameplay
 
         private void RemovePlayer(ulong clientId) => _playerRollbacks.Remove(clientId);
 
-        public void Rollback(int tick)
+        public void Rollback(double time)
         {
             foreach (var keyValuePair in _playerRollbacks)
             {
-                _playerRollbacks[keyValuePair.Key].RollbackServerRpc(tick);
+                _playerRollbacks[keyValuePair.Key].RollbackServerRpc(time);
             }
         }
 

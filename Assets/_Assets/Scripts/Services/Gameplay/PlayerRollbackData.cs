@@ -7,25 +7,25 @@ namespace _Assets.Scripts.Services.Gameplay
 {
     public struct PlayerRollbackData : INetworkSerializable, IEquatable<PlayerRollbackData>
     {
-        public int Tick;
+        public double Time;
         public Vector3[] ColliderPositions;
 
 
-        public PlayerRollbackData(int tick, Vector3[] colliderPositions)
+        public PlayerRollbackData(double time, Vector3[] colliderPositions)
         {
-            Tick = tick;
+            Time = time;
             ColliderPositions = colliderPositions;
         }
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
-            serializer.SerializeValue(ref Tick);
+            serializer.SerializeValue(ref Time);
             serializer.SerializeValue(ref ColliderPositions);
         }
 
         public bool Equals(PlayerRollbackData other)
         {
-            return Equals(ColliderPositions, other.ColliderPositions) && Tick == other.Tick;
+            return Time.Equals(other.Time) && Equals(ColliderPositions, other.ColliderPositions);
         }
 
         public override bool Equals(object obj)
@@ -35,7 +35,7 @@ namespace _Assets.Scripts.Services.Gameplay
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(ColliderPositions, Tick);
+            return HashCode.Combine(Time, ColliderPositions);
         }
     }
 }
