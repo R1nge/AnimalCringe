@@ -76,6 +76,8 @@ namespace _Assets.Scripts.Weapons
         [ServerRpc]
         private void ShootServerRpc(ulong ownerId, Vector3 shootOrigin, Vector3 shootDirection, int tick)
         {
+            tick -= 1; //The client transform has a 1 tick of interpolation, so account for that
+            Debug.LogError($"[SERVER] Rollback tick: {tick}, Server Tick {NetworkManager.Singleton.NetworkTickSystem.ServerTime.Tick}, Delta {NetworkManager.Singleton.NetworkTickSystem.ServerTime.Tick - tick}");
             _rollbackService.Rollback(tick);
             //Since I'm rolling back colliders, colliders should be damageable
             _weapon.Shoot(ownerId, shootOrigin, shootDirection);

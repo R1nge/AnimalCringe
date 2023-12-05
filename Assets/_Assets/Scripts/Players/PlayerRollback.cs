@@ -16,8 +16,9 @@ namespace _Assets.Scripts.Players
         [Inject]
         private void Inject(RollbackService rollbackService) => _rollbackService = rollbackService;
 
-        private void Awake()
+        public override void OnNetworkSpawn()
         {
+            _playerRollbackData = new PlayerRollbackData[NetworkManager.NetworkTickSystem.TickRate];
             _colliderPositions = new Vector3[colliders.Length];
             _colliderPositionsStart = new Vector3[colliders.Length];
 
@@ -25,11 +26,7 @@ namespace _Assets.Scripts.Players
             {
                 _colliderPositionsStart[i] = colliders[i].transform.localPosition;
             }
-        }
 
-        public override void OnNetworkSpawn()
-        {
-            _playerRollbackData = new PlayerRollbackData[NetworkManager.NetworkTickSystem.TickRate];
 
             if (!IsOwner) return;
 
@@ -64,31 +61,28 @@ namespace _Assets.Scripts.Players
         [ServerRpc(RequireOwnership = false)]
         public void RollbackServerRpc(int tick)
         {
+            long tickModulo = tick % NetworkManager.NetworkTickSystem.TickRate;
             for (int data = 0; data < _playerRollbackData.Length; data++)
             {
-                if (_playerRollbackData[data].Tick == tick)
+                if (_playerRollbackData[data].Tick == (int)tickModulo)
                 {
-                    RollbackClientRpc(_playerRollbackData[data]);
+                    for (int i = 0; i < colliders.Length; i++)
+                    {
+                        //I think something is wrong here
+                        //Like, player has already moved a bit since the last tick
+                        //So, the colliders are not in the right position
+                        //Should probably spawn and despawn them?
+                        Vector3 position = _playerRollbackData[data].ColliderPositions[i];
+                        colliders[i].transform.localPosition = transform.InverseTransformPoint(position);
+                    }
+
                     break;
                 }
             }
         }
 
-        [ClientRpc]
-        private void RollbackClientRpc(PlayerRollbackData playerRollbackData)
-        {
-            for (int i = 0; i < colliders.Length; i++)
-            {
-                Vector3 position = playerRollbackData.ColliderPositions[i];
-                colliders[i].transform.localPosition = transform.InverseTransformPoint(position);
-            }
-        }
-
         [ServerRpc(RequireOwnership = false)]
-        public void ReturnServerRpc() => ReturnClientRpc();
-
-        [ClientRpc]
-        private void ReturnClientRpc()
+        public void ReturnServerRpc()
         {
             for (int i = 0; i < colliders.Length; i++)
             {
