@@ -46,11 +46,10 @@ public class CPMPlayer : NetworkBehaviour
     {
         _characterController = GetComponent<CharacterController>();
         _playerInput = GetComponent<PlayerInput>();
-        NetworkManager.Singleton.NetworkTickSystem.Tick += OnTick;
         _clientNetworkTransform = GetComponent<ClientNetworkTransform>();
     }
 
-    private void OnTick()
+    public void OnTick()
     {
         if (IsServer) return;
         if (!IsOwner) return;

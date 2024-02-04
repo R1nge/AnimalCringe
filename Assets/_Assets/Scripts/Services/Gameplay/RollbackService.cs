@@ -33,7 +33,7 @@ namespace _Assets.Scripts.Services.Gameplay
         {
             foreach (var keyValuePair in _playerRollbacks)
             {
-                _playerRollbacks[keyValuePair.Key].RollbackServerRpc(time);
+                _playerRollbacks[keyValuePair.Key].Rollback(time);
             }
         }
 
@@ -41,7 +41,7 @@ namespace _Assets.Scripts.Services.Gameplay
         {
             foreach (var keyValuePair in _playerRollbacks)
             {
-                _playerRollbacks[keyValuePair.Key].ReturnServerRpc();
+                _playerRollbacks[keyValuePair.Key].Return();
             }
         }
     }

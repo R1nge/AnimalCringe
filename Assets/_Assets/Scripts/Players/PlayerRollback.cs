@@ -29,12 +29,9 @@ namespace _Assets.Scripts.Players
                 _colliderPositionsStart[i] = colliders[i].transform.localPosition;
             }
 
-
             if (!IsOwner) return;
 
             AddPlayerRollbackServerRpc();
-
-            NetworkManager.NetworkTickSystem.Tick += OnTick;
         }
 
         [ServerRpc]
@@ -43,8 +40,10 @@ namespace _Assets.Scripts.Players
             _rollbackService.AddPlayer(this, NetworkObject.OwnerClientId);
         }
 
-        private void OnTick()
+        public void OnTick()
         {
+            //Set the previous positon data on rollback
+
             for (int i = 0; i < _colliderPositions.Length; i++)
             {
                 _colliderPositions[i] = colliders[i].transform.position;
@@ -53,40 +52,56 @@ namespace _Assets.Scripts.Players
             AddPlayerRollbackDataServerRpc(_colliderPositions);
         }
 
-        [ServerRpc(Delivery = RpcDelivery.Unreliable)]
-        private void AddPlayerRollbackDataServerRpc(Vector3[] collidersPosition, ServerRpcParams serverRpcParams = default)
+        [ServerRpc]
+        private void AddPlayerRollbackDataServerRpc(Vector3[] collidersPosition)
         {
             long tick = NetworkManager.NetworkTickSystem.ServerTime.Tick % NetworkManager.NetworkTickSystem.TickRate;
             _playerRollbackData[tick] = new PlayerRollbackData(NetworkManager.NetworkTickSystem.ServerTime.Time, collidersPosition);
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void RollbackServerRpc(double time)
+        public void Rollback(double time)
         {
-            //It freezes the position, because the rollback position will be fed to the server and then rolled back again?
-            for (int i = 0; i < _playerRollbackData.Length; i++)
-            {
-                //Get the closest tick
-                if (Math.Abs(_playerRollbackData[i].Time - time) <= 1f / NetworkManager.NetworkTickSystem.TickRate)
-                {
-                    PlayerRollbackData current = _playerRollbackData[i];
-                    PlayerRollbackData previous = i == 0 ? _playerRollbackData[^1] : _playerRollbackData[i - 1];
+            //I can find the max value firts
+            //Theen loop backwards
 
-                    var delta = (float)(current.Time - previous.Time);
-                    float interpolation = Mathf.Clamp01((float)(time - previous.Time) / delta);
+            int currentIndex = Array.FindIndex(_playerRollbackData, data => Math.Abs(data.Time - time) < 1f / NetworkManager.NetworkTickSystem.TickRate);
+            int previousIndex = (currentIndex - 1 + _playerRollbackData.Length) % _playerRollbackData.Length;
 
-                    Vector3 position = Vector3.Lerp(current.ColliderPositions[0], previous.ColliderPositions[0], interpolation);
+            PlayerRollbackData current = _playerRollbackData[currentIndex];
+            PlayerRollbackData previous = _playerRollbackData[previousIndex];
 
-                    Debug.LogError($"Rollback LERP: {interpolation}");
-                    colliders[0].transform.localPosition = transform.InverseTransformPoint(position);
+            Debug.LogError($"TIME {time} CURRENT TIME {current.Time}; PREVIOUS TIME {previous.Time}; MAX TIME {_playerRollbackData.Max(data => data.Time)}");
 
-                    break;
-                }
-            }
+            //Example:
+            //time = 27.049998826459
+            //current tick time = 27.04
+            //previous tick time = 27.02
+            //delta between time and current.Time = 0.009998
+            //delta between ticks = 0.01771
+            //interpolation = 0.435461
+
+            double delta = time - current.Time;
+            double tickDelta = current.Time - previous.Time;
+            double interpolation = Clamp01(delta / tickDelta);
+
+            var newInterpolation = interpolation;//1 - interpolation;
+
+            //Vector3 position = Vector3.Lerp(previous.ColliderPositions[0], current.ColliderPositions[0], interpolation);
+            Vector3 position = Vector3.Lerp(previous.ColliderPositions[0], current.ColliderPositions[0], (float)newInterpolation);
+
+            Debug.LogError($"Rollback LERP: {interpolation}");
+
+            colliders[0].transform.localPosition = transform.TransformPoint(position);
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void ReturnServerRpc()
+        private double Clamp01(double value)
+        {
+            if (value < 0.0)
+                return 0.0d;
+            return value > 1.0 ? 1d : value;
+        }
+
+        public void Return()
         {
             for (int i = 0; i < colliders.Length; i++)
             {

@@ -36,10 +36,10 @@ namespace _Assets.Scripts.Weapons
                 {
                     for (int i = 0; i < hits; i++)
                     {
-                        Debug.LogError($"Hits: {Hits[i].transform.name}");
                         if (Hits[i].transform.TryGetComponent(out IDamageable damageable))
                         {
                             hitInfo.Hit = true;
+
 
                             if (Hits[i].transform.root.TryGetComponent(out NetworkObject networkObject))
                             {
@@ -51,7 +51,7 @@ namespace _Assets.Scripts.Weapons
                                 hitInfo.VictimId = networkObject.OwnerClientId;
 
                                 damageable.TakeDamage(owner, weaponConfig.Damage);
-                                
+
                                 return hitInfo;
                             }
                         }

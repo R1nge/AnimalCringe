@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using _Assets.Scripts.Players;
 using _Assets.Scripts.Services.Gameplay;
@@ -23,19 +24,17 @@ namespace _Assets.Scripts.Weapons
 
         private void Awake() => _playerInput = GetComponent<PlayerInput>();
 
-        public override void OnNetworkSpawn()
-        {
-            _weapon = weapons[_currentWeaponIndex];
-            NetworkManager.Singleton.NetworkTickSystem.Tick += OnTick;
-        }
+        public override void OnNetworkSpawn() => _weapon = weapons[_currentWeaponIndex];
 
-        private void OnTick()
+        public void OnTick()
         {
             if (!IsOwner) return;
             if (!_playerInput.Enabled) return;
             if (_weapon == null) return;
 
             _weapon.OnTick();
+            
+           
         }
 
         private void Update()
@@ -49,10 +48,15 @@ namespace _Assets.Scripts.Weapons
                 Vector3 shootOrigin = playerCamera.transform.position;
                 Vector3 shootDirection = playerCamera.transform.forward;
 
+                double shootTime = NetworkManager.Singleton.NetworkTickSystem.ServerTime.Time;
+                
+                Debug.LogError($"[SERVER] SHOOT TIME {shootTime}");
+                Debug.LogError($"[CLIENT] SHOOT TIME {NetworkManager.Singleton.NetworkTickSystem.LocalTime.Time}");
+
                 if (!IsServer)
                 {
                     PlayAnimationServerRpc();
-                    ShootServerRpc(OwnerClientId, shootOrigin, shootDirection, NetworkManager.Singleton.NetworkTickSystem.ServerTime.Time);
+                    ShootServerRpc(OwnerClientId, shootOrigin, shootDirection, shootTime);
                 }
                 else
                 {
